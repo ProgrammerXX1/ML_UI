@@ -64,13 +64,9 @@ async function register() {
         is_api_user: false,
       }),
     })
-
-    if (!res.ok) {
-      throw new Error('Registration failed')
-    }
-
     const data = await res.json()
     localStorage.setItem('access_token', data.access_token)
+  
     navigateTo('/home')
   } catch (err) {
     alert('Registration failed')
