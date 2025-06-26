@@ -13,7 +13,9 @@ app.add_middleware(
 )
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(chat.router, prefix="/chat", tags=["Chat"])
+
 def custom_openapi():
+    
     if app.openapi_schema:
         return app.openapi_schema
 

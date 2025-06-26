@@ -1,18 +1,22 @@
-// utils/api.ts
-export const API_BASE = 'http://127.0.0.1:8000';
-
-export async function apiFetch(path: string, options: RequestInit = {}) {
-  const token = localStorage.getItem('access_token');
-
-  return await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-  }).then(res => {
-    if (!res.ok) throw new Error(`API error: ${res.status}`);
-    return res.json();
-  });
+export async function apiFetch(url, options = {}) {
+  const baseUrl = 'http://localhost:8000' // URL бэкенда
+  const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : url
+  try {
+    console.log(`[apiFetch] URL: ${fullUrl}`, options)
+    const response = await fetch(fullUrl, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    })
+    if (!response.ok && response.status !== 204) {
+      const errorText = await response.text().catch(() => 'Неизвестная ошибка')
+      throw new Error(`HTTP error! Status: ${response.status}, Detail: ${errorText}`)
+    }
+    return response.status === 204 ? response : await response.json()
+  } catch (err) {
+    console.error(`Ошибка в apiFetch для ${url}:`, err)
+    throw err
+  }
 }

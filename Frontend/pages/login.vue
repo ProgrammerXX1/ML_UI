@@ -50,7 +50,7 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
-import { navigateTo } from '#app'
+
 
 const username = ref('')
 const password = ref('')
@@ -81,7 +81,7 @@ const login = async () => {
     if (accessToken) {
       localStorage.setItem('access_token', accessToken)
       localStorage.setItem('username', returnedUsername ?? 'Unknown')
-      navigateTo('/home')
+      navigateTo('/')
     } else {
       alert('Ошибка: токен не получен')
     }

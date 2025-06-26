@@ -67,7 +67,7 @@ async function register() {
     const data = await res.json()
     localStorage.setItem('access_token', data.access_token)
   
-    navigateTo('/home')
+    navigateTo('/')
   } catch (err) {
     alert('Registration failed')
     console.error(err)

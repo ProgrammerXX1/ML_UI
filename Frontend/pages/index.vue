@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useColorMode } from '@vueuse/core'
+import { useAsyncData } from '#imports'
+import { apiFetch } from '@/utils/api'
 import {
   CircleUser, File, Home, LineChart, ListFilter, MoreHorizontal,
   Package, Package2, PanelLeft, PlusCircle, Search, Settings, ShoppingCart, Users2
@@ -15,98 +17,277 @@ const activeTab = ref<'all' | 'Active' | 'Draft' | 'Archived'>('all')
 const searchQuery = ref('')
 const currentPage = ref(1)
 const itemsPerPage = 4
+const isLoading = ref(false)
 
 // Модалка для редактирования
 const isEditModalOpen = ref(false)
-const editingQuest = ref<null | {
+const editingChat = ref<null | {
   id: number
-  image: string
   name: string
   status: 'Active' | 'Draft' | 'Archived'
-  token: number
-  corrects: number
   created_at: string
+  image?: string
 }>(null)
 
-// Данные квестов
-const quests = ref([
-  { id: 1, image: '/images/1.png', name: 'CHAT 1', status: 'Draft', token: 150, corrects: 25, created_at: '2023-07-12 10:42 AM' },
-  { id: 2, image: '/images/1.png', name: 'CHAT 2', status: 'Active', token: 130, corrects: 100, created_at: '2023-10-18 03:21 PM' },
-  { id: 3, image: '/images/1.png', name: 'CHAT 3', status: 'Archived', token: 100, corrects: 90, created_at: '2025-02-18 03:21 PM' },
-  { id: 4, image: '/images/1.png', name: 'CHAT 4', status: 'Draft', token: 170, corrects: 40, created_at: '2024-01-10 11:00 AM' },
-  { id: 5, image: '/images/1.png', name: 'CHAT 5', status: 'Active', token: 190, corrects: 130, created_at: '2024-03-02 01:30 PM' },
-  { id: 6, image: '/images/1.png', name: 'CHAT 6', status: 'Archived', token: 110, corrects: 55, created_at: '2022-11-22 04:10 PM' },
-  { id: 7, image: '/images/1.png', name: 'CHAT 7', status: 'Draft', token: 140, corrects: 10, created_at: '2023-05-06 08:20 AM' },
-  { id: 8, image: '/images/1.png', name: 'CHAT 8', status: 'Active', token: 200, corrects: 145, created_at: '2024-07-15 06:45 PM' },
-  { id: 9, image: '/images/1.png', name: 'CHAT 9', status: 'Archived', token: 120, corrects: 60, created_at: '2021-09-30 12:00 PM' },
-  { id: 10, image: '/images/1.png', name: 'CHAT 10', status: 'Draft', token: 155, corrects: 35, created_at: '2023-08-12 09:50 AM' },
-  { id: 11, image: '/images/1.png', name: 'CHAT 11', status: 'Active', token: 160, corrects: 120, created_at: '2024-10-05 03:40 PM' },
-  { id: 12, image: '/images/1.png', name: 'CHAT 12', status: 'Archived', token: 95, corrects: 80, created_at: '2023-03-25 05:15 PM' },
-  { id: 13, image: '/images/1.png', name: 'CHAT 13', status: 'Draft', token: 135, corrects: 15, created_at: '2024-12-11 10:10 AM' },
-  { id: 14, image: '/images/1.png', name: 'CHAT 14', status: 'Active', token: 180, corrects: 110, created_at: '2025-01-21 02:25 PM' },
-  { id: 15, image: '/images/1.png', name: 'CHAT 15', status: 'Archived', token: 105, corrects: 70, created_at: '2022-06-18 11:35 AM' },
-])
-const filteredQuests = computed(() => {
-  return quests.value.filter((q) => {
-    const matchesSearch = q.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchesStatus = activeTab.value === 'all' || q.status === activeTab.value
+// Данные чатов с отслеживанием кликов
+const chats = ref<any[]>([])
+const clickCounts = ref<{ [key: number]: number }>({})
+const lastClickTime = ref<{ [key: number]: number }>({})
+
+// Загрузка данных
+const { data: fetchedChats, pending: isInitialLoading, refresh } = await useAsyncData('chats', async () => {
+  if (process.server) return []
+  isLoading.value = true
+  try {
+    const token = localStorage.getItem('access_token')
+    console.log(`[${new Date().toISOString()}] Токен:`, token)
+    if (!token) {
+      console.log(`[${new Date().toISOString()}] Токен отсутствует, редирект на /auth/login`)
+      await navigateTo('/auth/login')
+      return []
+    }
+    console.log(`[${new Date().toISOString()}] Отправляем запрос на /chat/list`)
+    const res = await apiFetch('/chat/list', {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    console.log(`[${new Date().toISOString()}] Ответ от /chat/list:`, res)
+    if (!Array.isArray(res)) {
+      console.error(`[${new Date().toISOString()}] /chat/list вернул не массив:`, res)
+      return []
+    }
+    return res.map(chat => {
+      const id = Number(chat.id)
+      if (isNaN(id)) {
+        console.warn(`Некорректный id для чата:`, chat)
+        return null
+      }
+      return {
+        id,
+        name: chat.title || 'Без названия',
+        status: chat.status || 'Draft',
+        created_at: chat.created_at || new Date().toISOString(),
+        image: '/images/chat-2.png'
+      }
+    }).filter(chat => chat !== null)
+  } catch (err) {
+    console.error(`[${new Date().toISOString()}] Не удалось загрузить чаты:`, err)
+    return []
+  } finally {
+    isLoading.value = false
+  }
+}, { server: false })
+
+// Синхронизация данных
+watch(fetchedChats, (newChats) => {
+  chats.value = newChats || []
+  clickCounts.value = {}
+  lastClickTime.value = {}
+})
+
+const filteredChats = computed(() => {
+  return chats.value.filter(c => {
+    const matchesSearch = (c.name || '').toLowerCase().includes(searchQuery.value.toLowerCase())
+    const matchesStatus = activeTab.value === 'all' || c.status === activeTab.value
     return matchesSearch && matchesStatus
   })
 })
-const paginatedQuests = computed(() => {
+
+const paginatedChats = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
   const end = start + itemsPerPage
-  return filteredQuests.value.slice(start, end)
+  return filteredChats.value.slice(start, end)
 })
-const totalPages = computed(() => {
-  return Math.ceil(filteredQuests.value.length / itemsPerPage)
-})
+
+const totalPages = computed(() => Math.ceil((filteredChats.value?.length || 0) / itemsPerPage))
+
 function changeTab(tab: 'all' | 'Active' | 'Draft' | 'Archived') {
   activeTab.value = tab
   currentPage.value = 1
 }
-function goToQuest(questId: number) {
-  router.push({ name: 'QuestDetails', params: { id: questId } })
+
+async function handleChatClick(chatId: number) {
+  console.log('Получен chatId для клика:', chatId)
+  const now = Date.now()
+  const lastClick = lastClickTime.value[chatId] || 0
+  const doubleClickThreshold = 300
+
+  if (now - lastClick < doubleClickThreshold) {
+    await goToChat(chatId)
+    clickCounts.value[chatId] = 0
+    lastClickTime.value[chatId] = 0
+  } else {
+    clickCounts.value[chatId] = 1
+  }
+  lastClickTime.value[chatId] = now
 }
-function logout() {
-  localStorage.removeItem('access_token')
-  localStorage.removeItem('username')
-  navigateTo('/login')
-}
-function openEditModal(quest: typeof quests.value[0]) {
-  editingQuest.value = { ...quest }
-  isEditModalOpen.value = true
-}
-function saveQuest() {
-  if (editingQuest.value) {
-    const index = quests.value.findIndex((q) => q.id === editingQuest.value!.id)
-    if (index !== -1) {
-      quests.value[index] = { ...editingQuest.value }
+
+async function goToChat(chatId: number) {
+  if (process.server || !Number.isInteger(chatId) || chatId <= 0) {
+    console.error(`Некорректный chatId: ${chatId}`)
+    alert('Некорректный идентификатор чата')
+    return
+  }
+  try {
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      await navigateTo('/auth/login')
+      return
     }
+    console.log(`[${new Date().toISOString()}] Запрос на /chat/${chatId}`)
+    const res = await apiFetch(`/chat/${chatId}`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!res || !res.id) {
+      throw new Error('Чат не найден')
+    }
+    console.log(`[${new Date().toISOString()}] Переход на /chat/${chatId}`)
+    await router.push(`/chat/${chatId}`)
+  } catch (err) {
+    console.error(`[${new Date().toISOString()}] Ошибка при переходе в чат ${chatId}:`, err)
+    alert('Не удалось открыть чат: ' + (err.message || 'Чат не найден'))
+  }
+}
+
+async function createChat() {
+  if (process.server) return
+  try {
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      await navigateTo('/auth/login')
+      return
+    }
+    isLoading.value = true
+    const res = await apiFetch('/chat/create', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: `Новый чат ${new Date().toISOString()}`, status: 'Draft' })
+    })
+    await refresh() // Обновляем данные через useAsyncData
+    await router.push(`/chat/${res.id}`)
+  } catch (err) {
+    console.error(`[${new Date().toISOString()}] Не удалось создать чат:`, err)
+    alert('Ошибка при создании чата')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+async function saveQuest() {
+  if (process.server || !editingChat.value) return
+  try {
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      await navigateTo('/auth/login')
+      return
+    }
+    isLoading.value = true
+    const res = await apiFetch(`/chat/${editingChat.value.id}`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: editingChat.value.name, status: editingChat.value.status })
+    })
+    await refresh() // Обновляем данные
+  } catch (err) {
+    console.error(`[${new Date().toISOString()}] Не удалось обновить чат ${editingChat.value?.id || 'unknown'}:`, err)
+    alert('Ошибка при сохранении чата')
+  } finally {
     isEditModalOpen.value = false
-    editingQuest.value = null
+    editingChat.value = null
+    isLoading.value = false
   }
 }
-function deleteQuest(questId: number) {
-  if (confirm('Are you sure you want to delete this quest?')) {
-    quests.value = quests.value.filter((q) => q.id !== questId)
+
+async function deleteQuest(chatId: number) {
+  if (process.server) return
+  if (confirm('Вы точно хотите удалить этот чат?')) {
+    try {
+      const token = localStorage.getItem('access_token')
+      if (!token) {
+        await navigateTo('/auth/login')
+        return
+      }
+      isLoading.value = true
+      const res = await apiFetch(`/chat/${chatId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (res.status === 204 || res.ok) {
+        await refresh() // Обновляем данные
+        if (filteredChats.value.length === 0 && currentPage.value > 1) {
+          currentPage.value = Math.max(1, currentPage.value - 1)
+        }
+      } else {
+        const errorText = await res.text().catch(() => 'Неизвестная ошибка')
+        throw new Error(`HTTP error! Status: ${res.status}, Detail: ${errorText}`)
+      }
+    } catch (err) {
+      console.error(`[${new Date().toISOString()}] Ошибка при удалении чата ${chatId}:`, err)
+      alert(`Ошибка при удалении чата: ${err.message || 'Неизвестная ошибка'}`)
+    } finally {
+      isLoading.value = false
+    }
   }
 }
+
+async function sendMessage(chatId: number | null, message: string) {
+  if (process.server || !message.trim()) return
+  try {
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      await navigateTo('/auth/login')
+      return
+    }
+    isLoading.value = true
+    const res = await apiFetch('/chat', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, title: chatId ? undefined : `Новый чат ${new Date().toISOString()}`, chat_id: chatId })
+    })
+    await refresh() // Обновляем данные
+    if (!chatId) {
+      await router.push(`/chat/${res.chat_id}`)
+    }
+  } catch (err) {
+    console.error(`[${new Date().toISOString()}] Не удалось отправить сообщение:`, err)
+    alert('Ошибка при отправке сообщения')
+  } finally {
+    isLoading.value = false
+  }
+}
+
 function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page
   }
 }
-// Уведомление "Ещё в разработке"
+
 function showUnderDevelopment() {
-  alert('This feature is still under development.')
+  alert('Эти части еще находятся в разработке. Пожалуйста, вернитесь позже')
 }
-onMounted(() => {
+
+function logout() {
+  if (process.server) return
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('username')
+  navigateTo('/auth/login')
+}
+
+function openEditModal(chat: typeof chats.value[0]) {
+  editingChat.value = { ...chat }
+  isEditModalOpen.value = true
+}
+
+onMounted(async () => {
+  if (process.server) return
   const stored = localStorage.getItem('username')
   if (stored && stored.trim() && stored !== 'undefined') {
     username.value = stored
   }
+  await refresh() // Выполняем начальную загрузку
 })
+
 definePageMeta({
   middleware: ['auth'],
 })
@@ -127,7 +308,7 @@ definePageMeta({
           <ShoppingCart class="h-5 w-5" /> Orders
         </a>
         <a href="#" class="flex items-center gap-4 px-2.5 text-white">
-          <Package class="h-5 w-5" /> Quests
+          <Package class="h-5 w-5" /> Chats
         </a>
         <a href="#" class="flex items-center gap-4 px-2.5 text-gray-400 hover:text-white" @click="showUnderDevelopment">
           <Users2 class="h-5 w-5" /> Customers
@@ -159,7 +340,7 @@ definePageMeta({
                 <ShoppingCart class="h-5 w-5" /> Orders
               </a>
               <a href="#" class="flex items-center gap-4 px-2.5 text-white">
-                <Package class="h-5 w-5" /> Quests
+                <Package class="h-5 w-5" /> Chats
               </a>
               <a href="#" class="flex items-center gap-4 px-2.5 text-gray-400 hover:text-white" @click="showUnderDevelopment">
                 <Users2 class="h-5 w-5" /> Customers
@@ -178,10 +359,10 @@ definePageMeta({
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink as-child><a href="#">Quests</a></BreadcrumbLink>
+              <BreadcrumbLink as-child><a href="#">Chats</a></BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem><BreadcrumbPage>All Quests</BreadcrumbPage></BreadcrumbItem>
+            <BreadcrumbItem><BreadcrumbPage>All Chats</BreadcrumbPage></BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         <!-- Search bar -->
@@ -255,53 +436,54 @@ definePageMeta({
                 <File class="h-4 w-4" />
                 <span class="sr-only sm:not-sr-only">Export</span>
               </Button>
-              <NuxtLink to="/chat">
-                <Button size="sm" class="h-7 gap-1 bg-blue-600 hover:bg-blue-700 text-white">
-                  <PlusCircle class="h-4 w-4" />
-                  <span class="sr-only sm:not-sr-only">Chat/Add Quest</span>
-                </Button>
-              </NuxtLink>
+              <Button size="sm" class="h-7 gap-1 bg-blue-600 hover:bg-blue-700 text-white" @click="createChat">
+                <PlusCircle class="h-4 w-4" />
+                <span class="sr-only sm:not-sr-only">Add Chat</span>
+              </Button>
             </div>
           </div>
           <Card class="bg-gray-900 border border-gray-800 text-white shadow-lg rounded-lg">
             <CardHeader>
-              <CardTitle>Quests</CardTitle>
-              <CardDescription>Manage your quests and view their performance optimization.</CardDescription>
+              <CardTitle>Chats</CardTitle>
+              <CardDescription>Manage your chats.</CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
+              <div v-if="isLoading">
+                <p>Загрузка...</p>
+              </div>
+              <div v-else-if="!chats.length">
+                <p>Чаты не найдены. Попробуйте создать новый чат.</p>
+              </div>
+              <Table v-else>
                 <TableHeader>
                   <TableRow>
                     <TableHead class="hidden w-[100px] sm:table-cell"><span class="sr-only">img</span></TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead class="hidden md:table-cell">Token</TableHead>
-                    <TableHead class="hidden md:table-cell">Corrects</TableHead>
                     <TableHead class="hidden md:table-cell">Created at</TableHead>
                     <TableHead><span class="sr-only">Actions</span></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody class="max-h-[400px] overflow-y-auto">
                   <TableRow
-                    v-for="quest in paginatedQuests"
-                    :key="quest.id"
-                    @click="goToQuest(quest.id)"
+                    v-for="chat in paginatedChats"
+                    :key="chat.id"
+                    @click="handleChatClick(chat.id)"
                     class="quest-row"
                   >
                     <TableCell class="hidden sm:table-cell">
                       <img
-                        :src="quest.image"
-                        alt="Quest"
+                        :src="chat.image"
+                        alt="Chat"
                         class="rounded-md object-cover"
                         width="64"
                         height="64"
+                        @error="chat.image = '/images/chat-2.png'"
                       />
                     </TableCell>
-                    <TableCell class="font-medium">{{ quest.name }}</TableCell>
-                    <TableCell><Badge variant="outline">{{ quest.status }}</Badge></TableCell>
-                    <TableCell class="hidden md:table-cell">{{ quest.token }}</TableCell>
-                    <TableCell class="hidden md:table-cell">{{ quest.corrects }}</TableCell>
-                    <TableCell class="hidden md:table-cell">{{ quest.created_at }}</TableCell>
+                    <TableCell class="font-medium">{{ chat.name }}</TableCell>
+                    <TableCell><Badge variant="outline">{{ chat.status }}</Badge></TableCell>
+                    <TableCell class="hidden md:table-cell">{{ new Date(chat.created_at).toLocaleString() }}</TableCell>
                     <TableCell @click.stop>
                       <DropdownMenu>
                         <DropdownMenuTrigger as-child>
@@ -311,8 +493,8 @@ definePageMeta({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" class="bg-gray-800 text-white border border-gray-700">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem @click="openEditModal(quest)">Edit</DropdownMenuItem>
-                          <DropdownMenuItem @click="deleteQuest(quest.id)">Delete</DropdownMenuItem>
+                          <DropdownMenuItem @click="openEditModal(chat)">Edit</DropdownMenuItem>
+                          <DropdownMenuItem @click="deleteQuest(chat.id)">Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -321,10 +503,13 @@ definePageMeta({
               </Table>
             </CardContent>
             <CardFooter class="flex justify-between items-center text-xs text-gray-400">
-              <div>
-                Showing <strong>{{ (currentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentPage * itemsPerPage, filteredQuests.length) }}</strong> of <strong>{{ filteredQuests.length }}</strong> quests
+              <div v-if="filteredChats.length === 0">
+                Showing 0-0 of 0 chats
               </div>
-              <div class="flex gap-2">
+              <div v-else>
+                Showing <strong>{{ (currentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentPage * itemsPerPage, filteredChats.length) }}</strong> of <strong>{{ filteredChats.length }}</strong> chats
+              </div>
+              <div class="flex gap-2" v-if="totalPages > 1">
                 <Button
                   size="sm"
                   variant="outline"
@@ -357,49 +542,28 @@ definePageMeta({
             </CardFooter>
           </Card>
         </Tabs>
-
         <!-- Модалка для редактирования -->
         <Sheet v-model:open="isEditModalOpen">
           <SheetContent class="bg-gray-900 text-white border-gray-800">
-            <div class="grid gap-4 py-4">
-              <h2 class="text-lg font-semibold">Edit Quest</h2>
+            <div class="grid gap-4 py-4" v-if="editingChat">
+              <h2 class="text-lg font-semibold">Edit Chat</h2>
               <div class="grid gap-2">
                 <label for="name">Name</label>
                 <Input
                   id="name"
-                  v-model="editingQuest.name"
+                  v-model="editingChat.name"
                   class="bg-gray-800 text-white border-gray-700"
                 />
-              </div>
-              <div class="grid gap-2">
                 <label for="status">Status</label>
                 <select
                   id="status"
-                  v-model="editingQuest.status"
-                  class="bg-gray-800 text-white border-gray-700 rounded-lg p-2"
+                  v-model="editingChat.status"
+                  class="bg-gray-800 text-white border-gray-700 rounded-md p-2"
                 >
                   <option value="Active">Active</option>
                   <option value="Draft">Draft</option>
                   <option value="Archived">Archived</option>
                 </select>
-              </div>
-              <div class="grid gap-2">
-                <label for="token">Token</label>
-                <Input
-                  id="token"
-                  type="number"
-                  v-model.number="editingQuest.token"
-                  class="bg-gray-800 text-white border-gray-700"
-                />
-              </div>
-              <div class="grid gap-2">
-                <label for="corrects">Corrects</label>
-                <Input
-                  id="corrects"
-                  type="number"
-                  v-model.number="editingQuest.corrects"
-                  class="bg-gray-800 text-white border-gray-700"
-                />
               </div>
               <Button
                 class="bg-blue-600 hover:bg-blue-700 text-white"
@@ -407,6 +571,9 @@ definePageMeta({
               >
                 Save
               </Button>
+            </div>
+            <div v-else>
+              <p>Ошибка: данные чата недоступны</p>
             </div>
           </SheetContent>
         </Sheet>
