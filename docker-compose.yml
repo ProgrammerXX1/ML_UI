@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   backend:
-    build: ./Backend
-    container_name: Backend
+    build: ./backend
+    container_name: backend
     depends_on:
       - ollama
     environment:
@@ -16,8 +16,8 @@ services:
       - app-net
 
   frontend:
-    build: ./Frontend
-    container_name: Frontend
+    build: .frontend
+    container_name: frontend
     depends_on:
       - backend
     ports:
