@@ -7,15 +7,15 @@ from db.session import engine
 from alembic.config import Config
 from alembic import command
 import os
-
+import logging
 app = FastAPI()
 
 # Миграции Alembic
 @app.on_event("startup")
 def apply_migrations():
     try:
-        # Путь до alembic.ini
-        alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "alembic.ini"))
+        base_dir = os.path.abspath(os.path.dirname(__file__))
+        alembic_cfg = Config(os.path.join(base_dir, "..", "alembic.ini"))
         command.upgrade(alembic_cfg, "head")
         logging.info("✅ Alembic migrations applied")
     except Exception as e:
