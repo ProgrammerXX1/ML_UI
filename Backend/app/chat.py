@@ -1,48 +1,51 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List
 import time
 import logging
 
 from services.ml import generate_response
 from db.models import Chat, ChatLog
-from core.dependencies import get_db, get_current_user, get_api_user
+from core.dependencies import get_db, get_current_user
 from schemas.chat import (
     ChatRequest, ChatResponse, ChatLogItem,
     ChatCreate, ChatOut, ChatUpdate, MessageResponse
 )
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
+
 router = APIRouter()
+
+
 # ✅ Создание чата
 @router.post("/chat/create", response_model=ChatOut)
 def create_chat(chat: ChatCreate, db: Session = Depends(get_db), user=Depends(get_current_user)):
-    new_chat = Chat(user_id=user.id, title=chat.title or "Новый чат", status=chat.status or "Draft")
+    new_chat = Chat(
+        user_id=user.id,
+        title=chat.title or "Новый чат",
+        status=chat.status or "Draft"
+    )
     db.add(new_chat)
     db.commit()
     db.refresh(new_chat)
     return new_chat
-# ✅ Отправка сообщения (в существующий чат или создание нового)
+
+
+# ✅ Отправка сообщения (в существующий чат)
 @router.post("/chat/{chat_id}/send", response_model=MessageResponse)
-def send_message(
-    chat_id: int,
-    request: ChatRequest,
-    db: Session = Depends(get_db),
-    user=Depends(get_current_user)
-):
+def send_message(chat_id: int, request: ChatRequest, db: Session = Depends(get_db), user=Depends(get_current_user)):
     chat = db.query(Chat).filter(Chat.id == chat_id, Chat.user_id == user.id).first()
     if not chat:
         raise HTTPException(status_code=404, detail="Чат не найден")
 
     start = time.time()
-
     try:
         response_text = generate_response(request.message)
     except Exception as e:
         logger.exception("❌ Ошибка генерации ответа")
         raise HTTPException(status_code=500, detail="Ошибка генерации ответа")
 
-    # Проверка на пустой или системный ответ
     if not response_text.strip() or "[Empty response]" in response_text or "Ошибка" in response_text:
         response_text = "⚠️ Модель не смогла ответить. Попробуйте переформулировать запрос."
 
@@ -68,69 +71,75 @@ def send_message(
         chat_id=chat_id
     )
 
-# ✅ Получение истории по конкретному чату
+
+# ✅ Получение истории по одному чату
 @router.get("/chat/{chat_id}/history", response_model=List[ChatLogItem])
 def get_chat_history(chat_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
     chat = db.query(Chat).filter(Chat.id == chat_id, Chat.user_id == user.id).first()
     if not chat:
-        raise HTTPException(404, "Чат не найден")
+        raise HTTPException(status_code=404, detail="Чат не найден")
 
     logs = db.query(ChatLog).filter(ChatLog.chat_id == chat_id, ChatLog.user_id == user.id).order_by(ChatLog.timestamp.desc()).all()
-    return [
-        ChatLogItem(
-            request_text=l.request_text,
-            response_text=l.response_text,
-            timestamp=l.timestamp,
-            latency_ms=l.latency_ms,
-            chat_id=l.chat_id
-        ) for l in logs
-    ]
-# ✅ Общая история всех чатов
+    return [ChatLogItem(
+        request_text=l.request_text,
+        response_text=l.response_text,
+        timestamp=l.timestamp,
+        latency_ms=l.latency_ms,
+        chat_id=l.chat_id
+    ) for l in logs]
+
+
+# ✅ История всех чатов пользователя
 @router.get("/chat/history", response_model=List[ChatLogItem])
 def get_user_chat_history(db: Session = Depends(get_db), user=Depends(get_current_user)):
     logs = db.query(ChatLog).filter(ChatLog.user_id == user.id).order_by(ChatLog.timestamp.desc()).all()
-    return [
-        ChatLogItem(
-            request_text=l.request_text,
-            response_text=l.response_text,
-            timestamp=l.timestamp,
-            latency_ms=l.latency_ms,
-            chat_id=l.chat_id
-        ) for l in logs
-    ]
-# ✅ Получение всех чатов юзера
+    return [ChatLogItem(
+        request_text=l.request_text,
+        response_text=l.response_text,
+        timestamp=l.timestamp,
+        latency_ms=l.latency_ms,
+        chat_id=l.chat_id
+    ) for l in logs]
+
+
+# ✅ Список всех чатов пользователя
 @router.get("/chat/list", response_model=List[ChatOut])
 def get_chat_list(db: Session = Depends(get_db), user=Depends(get_current_user)):
     chats = db.query(Chat).filter(Chat.user_id == user.id).order_by(Chat.created_at.desc()).all()
     return chats
-# ✅ Получение чата по id
+
+
+# ✅ Получение одного чата
 @router.get("/chat/{chat_id}", response_model=ChatOut)
 def get_chat(chat_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
     chat = db.query(Chat).filter(Chat.id == chat_id, Chat.user_id == user.id).first()
     if not chat:
-        raise HTTPException(404, "Чат не найден")
+        raise HTTPException(status_code=404, detail="Чат не найден")
     return chat
-# ✅ Получение сообщений чата
+
+
+# ✅ Получение всех сообщений чата
 @router.get("/chat/{chat_id}/messages", response_model=List[MessageResponse])
 def get_chat_messages(chat_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
     chat = db.query(Chat).filter(Chat.id == chat_id, Chat.user_id == user.id).first()
     if not chat:
-        raise HTTPException(404, "Чат не найден")
-    return [
-        MessageResponse(
-            request_text=m.request_text,
-            response_text=m.response_text,
-            timestamp=m.timestamp,
-            latency_ms=m.latency_ms,
-            chat_id=m.chat_id
-        ) for m in chat.messages
-    ]
+        raise HTTPException(status_code=404, detail="Чат не найден")
+
+    return [MessageResponse(
+        request_text=m.request_text,
+        response_text=m.response_text,
+        timestamp=m.timestamp,
+        latency_ms=m.latency_ms,
+        chat_id=m.chat_id
+    ) for m in chat.messages]
+
+
 # ✅ Редактирование чата
 @router.patch("/chat/{chat_id}", response_model=ChatOut)
 def update_chat(chat_id: int, update: ChatUpdate, db: Session = Depends(get_db), user=Depends(get_current_user)):
     chat = db.query(Chat).filter(Chat.id == chat_id, Chat.user_id == user.id).first()
     if not chat:
-        raise HTTPException(404, "Чат не найден")
+        raise HTTPException(status_code=404, detail="Чат не найден")
     if update.title:
         chat.title = update.title
     if update.status:
@@ -138,20 +147,24 @@ def update_chat(chat_id: int, update: ChatUpdate, db: Session = Depends(get_db),
     db.commit()
     return chat
 
+
 # ✅ Удаление чата
 @router.delete("/chat/{chat_id}", status_code=204)
 def delete_chat(chat_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
     chat = db.query(Chat).filter(Chat.id == chat_id, Chat.user_id == user.id).first()
     if not chat:
-        raise HTTPException(404, "Чат не найден")
+        raise HTTPException(status_code=404, detail="Чат не найден")
     db.delete(chat)
     db.commit()
+
+
 # ✅ Сохранение истории сообщений
 @router.post("/chat/{chat_id}/save")
 def save_chat_messages(chat_id: int, messages: List[MessageResponse], db: Session = Depends(get_db), user=Depends(get_current_user)):
     chat = db.query(Chat).filter(Chat.id == chat_id, Chat.user_id == user.id).first()
     if not chat:
-        raise HTTPException(404, "Чат не найден")
+        raise HTTPException(status_code=404, detail="Чат не найден")
+
     db.query(ChatLog).filter(ChatLog.chat_id == chat_id).delete()
     for msg in messages:
         db.add(ChatLog(

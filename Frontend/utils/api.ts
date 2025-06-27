@@ -1,8 +1,8 @@
-// api/utils/backend.ts
+// utils/api.ts
 
 export async function apiFetch(url: string, options: any = {}) {
-  // Используем переменную окружения или fallback
-  const baseUrl = process.env.NUXT_PUBLIC_API_BASE || 'http://backend:8000'
+  const config = useRuntimeConfig()
+  const baseUrl = config.public.apiBaseUrl || 'http://backend:8000'
   const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : url
 
   try {

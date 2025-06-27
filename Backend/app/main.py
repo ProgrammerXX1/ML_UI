@@ -1,25 +1,29 @@
 from fastapi import FastAPI
-from app import auth, chat  # ✅ auth.py и chat.py в папке app
+from app import auth, chat
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
-# ✅ CORS middleware
+
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://87.255.209.201",        # без порта (если нужно)
-        "http://87.255.209.201:3000",    # с портом, если фронт работает на 3000
-         "http://frontend:3000"  # если фронт работает в контейнере с именем frontend
+        "http://87.255.209.201",
+        "http://87.255.209.201:3000",
+        "http://frontend:3000"
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Роуты
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(chat.router, tags=["Chat"])
 
+# OpenAPI с BearerAuth
 def custom_openapi():
-    
     if app.openapi_schema:
         return app.openapi_schema
 
@@ -39,8 +43,15 @@ def custom_openapi():
     for path in openapi_schema["paths"].values():
         for operation in path.values():
             operation["security"] = [{"BearerAuth": []}]
-
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
 app.openapi = custom_openapi
+
+# Запуск в Docker
+if __name__ == "__main__":
+    import uvicorn
+    import os
+    host = os.getenv("BACKEND_HOST", "0.0.0.0")
+    port = int(os.getenv("BACKEND_PORT", 8000))
+    uvicorn.run("main:app", host=host, port=port, reload=False)
