@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
-    container_name: backend
+    build: ./Backend
+    container_name: Backend
     depends_on:
       - ollama
     environment:
@@ -16,8 +16,8 @@ services:
       - app-net
 
   frontend:
-    build: ./frontend
-    container_name: frontend
+    build: ./Frontend
+    container_name: Frontend
     depends_on:
       - backend
     ports:
@@ -38,7 +38,7 @@ services:
       - app-net
 
   db:
-    image: postgres:15
+    image: postgres:17
     container_name: db
     restart: always
     environment:
