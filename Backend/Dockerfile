@@ -11,7 +11,7 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копируем весь код бэкенда
-COPY backend/ .
+COPY . .
 
 # Открываем порт (если нужно)
 EXPOSE 8000
