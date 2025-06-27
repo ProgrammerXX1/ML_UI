@@ -22,7 +22,7 @@ services:
     depends_on:
       - ollama
     environment:
-      - DATABASE_URL=postgresql://postgres:2123@10.121.252.227:5432/postgres
+      - DATABASE_URL=postgresql://postgres:2123@127.0.0.1:5432/postgres
       - BACKEND_HOST=0.0.0.0
       - BACKEND_PORT=8000
     ports:
