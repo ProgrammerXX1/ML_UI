@@ -10,7 +10,7 @@ def generate_response(message: str) -> str:
     
     try:
         response = requests.post(
-            "http://ollama:11434/api/chat",
+            "http://ollama:11435/api/chat",
             json={
                 "model": "llama3:latest",  # или другую модель, если нужно
                 "messages": [{"role": "user", "content": message}],
