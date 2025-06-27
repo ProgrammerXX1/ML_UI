@@ -1,6 +1,22 @@
 version: '3.8'
 
 services:
+
+  db:
+    image: postgres:15
+    container_name: db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=2123
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-net
+
   backend:
     build: ./backend
     container_name: backend
@@ -37,20 +53,6 @@ services:
     networks:
       - app-net
 
-  db:
-    image: postgres:17
-    container_name: db
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=2123
-      - POSTGRES_DB=postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - app-net
 
 volumes:
   ollama_data:
