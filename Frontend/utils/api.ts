@@ -1,19 +1,26 @@
-export async function apiFetch(url, options = {}) {
-  const baseUrl = 'http://localhost:8000' // URL бэкенда
+// api/utils/backend.ts
+
+export async function apiFetch(url: string, options: any = {}) {
+  // Используем переменную окружения или fallback
+  const baseUrl = process.env.NUXT_PUBLIC_API_BASE || 'http://backend:8000'
   const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : url
+
   try {
     console.log(`[apiFetch] URL: ${fullUrl}`, options)
+
     const response = await fetch(fullUrl, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers
-      }
+        ...options.headers,
+      },
     })
+
     if (!response.ok && response.status !== 204) {
       const errorText = await response.text().catch(() => 'Неизвестная ошибка')
       throw new Error(`HTTP error! Status: ${response.status}, Detail: ${errorText}`)
     }
+
     return response.status === 204 ? response : await response.json()
   } catch (err) {
     console.error(`Ошибка в apiFetch для ${url}:`, err)

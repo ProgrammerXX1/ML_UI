@@ -299,7 +299,7 @@ async function sendMessage() {
 
     isGenerating.value = true // <-- показать лоадер
 
-    const res = await fetch(`http://localhost:8000/chat/${chatId}/send`, {
+    const res = await fetch(`http://:8000/chat/${chatId}/send`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,

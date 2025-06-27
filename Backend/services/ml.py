@@ -18,9 +18,9 @@ def generate_response(message: str) -> str:
         # deepseek-coder:latest    3ddd2d3fc8d2    776 MB   
         # llama3:latest            365c0bd3c000    4.7 GB   
         response = requests.post(
-            "http://localhost:11434/api/chat",
+            "http://ollama:11434/api/chat",
             json={
-                "model": "mistral:latest",
+                "model": "llama3:latest",
                 "messages": [{"role": "user", "content": message}],
                 "stream": True
             },
