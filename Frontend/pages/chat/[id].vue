@@ -111,7 +111,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { apiFetch } from '@/utils/api'
+import { apiFetch } from '~/utils/api'
 
 const userText = ref('')
 const chatHistory = ref<any[]>([])

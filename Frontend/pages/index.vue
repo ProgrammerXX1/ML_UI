@@ -342,7 +342,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useColorMode } from '@vueuse/core'
 import { useAsyncData } from '#imports'
-import { apiFetch } from '@/utils/api'
+import { apiFetch } from '~/utils/api'
 import { navigateTo } from '#app'
 
 const router = useRouter()
@@ -360,7 +360,7 @@ import {
   CircleUser, File, Home, LineChart, ListFilter, MoreHorizontal,
   Package, Package2, PanelLeft, PlusCircle, Search, Settings, ShoppingCart, Users2
 } from 'lucide-vue-next'
-import { Icon } from '@iconify/vue'
+import { Icon } from '@iconify/vue/dist/iconify.js'
 
 // Тип чата
 type Chat = {

@@ -7,7 +7,7 @@ import {
   DropdownMenuPortal,
   useForwardPropsEmits,
 } from 'radix-vue'
-import { cn } from '@/lib/utils'
+import { cn } from '~/lib/utils'
 
 const props = withDefaults(
   // eslint-disable-next-line vue/require-default-prop
