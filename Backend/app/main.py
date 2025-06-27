@@ -3,7 +3,23 @@ from app import auth, chat
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
 
+from db.session import engine
+from alembic.config import Config
+from alembic import command
+import os
+
 app = FastAPI()
+
+# Миграции Alembic
+@app.on_event("startup")
+def apply_migrations():
+    try:
+        # Путь до alembic.ini
+        alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "alembic.ini"))
+        command.upgrade(alembic_cfg, "head")
+        logging.info("✅ Alembic migrations applied")
+    except Exception as e:
+        logging.error(f"❌ Failed to apply Alembic migrations: {e}")
 
 # CORS
 app.add_middleware(
