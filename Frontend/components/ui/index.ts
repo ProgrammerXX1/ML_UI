@@ -1,4 +1,4 @@
-// src/components/ui/index.ts
+// src/components/ui/
 
 export * from './badge'
 export * from './button'
