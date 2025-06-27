@@ -12,7 +12,7 @@ router = APIRouter()
 def register(user_data: UserRegister, db: Session = Depends(get_db)):
     user = create_user(db, user_data.username, user_data.password, user_data.is_api_user)
     token = create_access_token(data={"sub": str(user.id)})
-    return {"access_token": token}
+    return {"access_token": token,"username": user.username  }
 
 @router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):

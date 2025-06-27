@@ -166,7 +166,7 @@ button, a, input {
 </style>
 ```
 <script setup lang="ts">
-
+import { navigateTo } from '#app'
 import { ref } from 'vue'
 const username = ref('')
 const password = ref('')
@@ -197,6 +197,7 @@ const login = async () => {
     if (accessToken) {
       localStorage.setItem('access_token', accessToken)
       localStorage.setItem('username', returnedUsername ?? 'Unknown')
+      useCookie('access_token').value = accessToken
       navigateTo('/')
     } else {
       alert('Ошибка: токен не получен')

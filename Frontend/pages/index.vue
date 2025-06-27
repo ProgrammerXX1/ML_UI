@@ -23,7 +23,7 @@
     <!-- Sidebar (Desktop) -->
     <aside class="fixed inset-y-0 left-0 z-20 w-64 flex-col border-r border-indigo-700/50 bg-gray-900/30 backdrop-blur-lg hidden sm:flex">
       <nav class="flex flex-col gap-6 px-4 py-6 text-lg font-medium">
-        <a href="#" class="group flex items-center justify-center h-12 w-full rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-all duration-300 hover:from-blue-500 hover:to-purple-500 shadow-glow">
+        <a href="#" class="group flex items-center justify-center h-12 w-full rounded-lg bg-gradient-to-r from-red-600 to-purple-600 text-black transition-all duration-300 hover:from-blue-500 hover:to-purple-500 shadow-glow">
           <svg class="h-8 w-8 animate-neural-network" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <g class="nodes">
               <circle cx="50" cy="50" r="10" fill="none" stroke="#a5b4fc" stroke-width="2" class="node node-center" />

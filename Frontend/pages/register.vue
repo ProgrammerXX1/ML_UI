@@ -208,6 +208,7 @@ button, a, input {
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { navigateTo } from '#app' // ✅ обязательно, если используешь Nuxt
 
 const username = ref('')
 const password = ref('')
@@ -215,6 +216,8 @@ const errorMessage = ref('')
 const loading = ref(false)
 
 const router = useRouter()
+
+import { useCookie } from '#app' // обязательно
 
 async function register() {
   errorMessage.value = ''
@@ -236,10 +239,17 @@ async function register() {
     }
 
     const data = await res.json()
-    localStorage.setItem('access_token', data.access_token)
-    localStorage.setItem('username', username.value)
 
-    router.push('/')
+    const accessToken = data.access_token
+    const returnedUsername = data.username
+
+    if (accessToken) {
+      localStorage.setItem('access_token', accessToken)
+      localStorage.setItem('username', returnedUsername ?? 'Unknown')
+      navigateTo('/') // ✅ переход на главную страницу после регистрации
+    } else {
+      alert('Ошибка: токен не получен')
+    }
   } catch (err: any) {
     errorMessage.value = err.message || 'Не удалось зарегистрироваться'
     console.error(err)
@@ -247,4 +257,5 @@ async function register() {
     loading.value = false
   }
 }
+
 </script>
