@@ -1,21 +1,22 @@
-# 1. Используем официальный образ Node.js
-FROM node:18-alpine
+# Используем официальный образ Node.js
+FROM node:18-alpine AS builder
 
-# 2. Рабочая директория
 WORKDIR /app
 
-# 3. Копируем зависимости
+# Копируем зависимости и устанавливаем
 COPY package*.json ./
-
-# 4. Устанавливаем зависимости
 RUN npm install
 
-# 5. Копируем весь проект
+# Копируем весь проект и собираем
 COPY . .
-
-# 6. Сборка проекта
 RUN npm run build
 
-# 7. Запуск Nuxt в режиме production
+# Стейдж для запуска приложения
+FROM node:18-alpine
+WORKDIR /app
+
+# Копируем только собранные файлы и зависимости
+COPY --from=builder /app ./
+
 EXPOSE 3000
 CMD ["npm", "run", "start"]
