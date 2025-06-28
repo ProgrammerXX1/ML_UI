@@ -343,7 +343,7 @@ import { useRouter } from 'vue-router'
 import { useColorMode } from '@vueuse/core'
 import { useAsyncData } from '#imports'
 import { apiFetch } from '~/utils/api'
-import { navigateTo } from '#app'
+import { navigateTo, useRuntimeConfig } from '#app'
 
 const router = useRouter()
 const colorMode = useColorMode()
@@ -353,6 +353,9 @@ const searchQuery = ref('')
 const currentPage = ref(1)
 const itemsPerPage = 4
 const isLoading = ref(false)
+const config = useRuntimeConfig()
+const API_BASE = config.public.NUXT_PUBLIC_API_URL
+
 
 type ChatStatus = 'Active' | 'Draft' | 'Archived'
 
@@ -515,14 +518,19 @@ async function deleteChat(chatId: number) {
   }
 }
 
-// Отправка сообщения
+// Отправка сообщенияconst API_BASE = import.meta.env.NUXT_PUBLIC_API_URL // или process.env.NUXT_PUBLIC_API_URL
+
 async function sendMessage(chatId: number | null, message: string) {
   if (!message.trim()) return
   try {
-    const res = await fetchWithToken('/chat', {
+    const res = await fetchWithToken(`${API_BASE}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, title: chatId ? undefined : `Новый чат`, chat_id: chatId })
+      body: JSON.stringify({
+        message,
+        title: chatId ? undefined : 'Новый чат',
+        chat_id: chatId
+      })
     })
     await refresh()
     if (!chatId) await router.push(`/chat/${res.chat_id}`)
