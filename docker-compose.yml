@@ -47,7 +47,7 @@ services:
     image: ollama/ollama
     container_name: ollama
     ports:
-      - "11435:11434"
+      - "11435:11434"  # наружный порт -> внутренний Ollama API
     volumes:
       - ollama_data:/root/.ollama
     networks:
@@ -58,9 +58,10 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     command: >
       bash -c "
-        ollama pull llama3 &&
-        ollama serve
+        ollama pull llama3 && 
+        ollama serve --host 0.0.0.0
       "
+
 
 
 
