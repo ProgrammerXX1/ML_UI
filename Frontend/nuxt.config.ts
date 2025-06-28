@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   target: 'server',
 
   devServer: {
-    host: '0.0.0.0',
+    host: '0.0.0.0:8080',
     port: 3000
   },
 
