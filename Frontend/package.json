@@ -13,6 +13,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@vueuse/nuxt":"13.4.0",
     "@nuxt/eslint": "^0.3.13",
     "@vueuse/core": "^10.10.0",
     "class-variance-authority": "^0.7.0",
