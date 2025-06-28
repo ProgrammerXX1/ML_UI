@@ -16,11 +16,21 @@ export default defineNuxtConfig({
 
   css: ['@/assets/css/tailwind.css'],
 
-  modules: [
-    '@nuxtjs/tailwindcss',
-    '@vueuse/nuxt'
+   modules: [
+    "@nuxt/eslint",
+    "shadcn-nuxt",
+    "@nuxtjs/tailwindcss",
+    "@nuxtjs/color-mode"
   ],
 
+  colorMode: {
+    classSuffix: ''
+  },
+
+  shadcn: {
+    prefix: '',
+    componentDir: './components/ui'
+  },
   tailwindcss: {
     viewer: false
   },
