@@ -207,7 +207,7 @@ button, a, input {
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { navigateTo, useRuntimeConfig, useCookie } from '#app'
+import { navigateTo, useRuntimeConfig } from '#app'
 const config = useRuntimeConfig()
 const username = ref('')
 const password = ref('')

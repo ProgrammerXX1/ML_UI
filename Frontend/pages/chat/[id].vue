@@ -110,9 +110,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { apiFetch } from '~/utils/api'
+import { useRuntimeConfig } from '#app'
 
+const config = useRuntimeConfig()
+const baseUrl = config.public.apiUrl 
 const userText = ref('')
 const chatHistory = ref<any[]>([])
 const username = ref('Гость')
@@ -124,7 +127,6 @@ const editableName = ref('')
 const isGenerating = ref(false)
 
 const route = useRoute()
-const router = useRouter()
 
 // Neural Mesh Background Animation
 const neuralMeshCanvas = ref(null)
@@ -298,13 +300,12 @@ async function sendMessage() {
     }
 
     isGenerating.value = true // <-- показать лоадер
-
-    const res = await fetch(`http://:8000/chat/${chatId}/send`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
+const res = await fetch(`${baseUrl}/chat/${chatId}/send`, {
+  method: 'POST',
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
       body: JSON.stringify({ message: userText.value }),
     })
 
