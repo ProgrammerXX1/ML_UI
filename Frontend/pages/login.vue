@@ -166,8 +166,11 @@ button, a, input {
 </style>
 ```
 <script setup lang="ts">
-import { navigateTo } from '#app'
 import { ref } from 'vue'
+import { navigateTo, useRuntimeConfig, useCookie } from '#app'
+
+const config = useRuntimeConfig()
+
 const username = ref('')
 const password = ref('')
 
@@ -177,7 +180,7 @@ const login = async () => {
     formData.append('username', username.value)
     formData.append('password', password.value)
 
-    const res = await fetch('http://127.0.0.1:8000/auth/login', {
+    const res = await fetch(`${config.public.apiUrl}/auth/login`, {
       method: 'POST',
       body: formData,
       headers: {
@@ -185,12 +188,9 @@ const login = async () => {
       }
     })
 
-    if (!res.ok) {
-      throw new Error(`Ошибка входа: ${res.status}`)
-    }
+    if (!res.ok) throw new Error(`Ошибка входа: ${res.status}`)
 
     const data = await res.json()
-
     const accessToken = data.access_token
     const returnedUsername = data.username
 
@@ -207,7 +207,5 @@ const login = async () => {
     alert('Неверные данные для входа')
   }
 }
-
-
 </script>
 

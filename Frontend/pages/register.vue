@@ -207,23 +207,17 @@ button, a, input {
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { navigateTo } from '#app' // ✅ обязательно, если используешь Nuxt
-
+import { navigateTo, useRuntimeConfig, useCookie } from '#app'
+const config = useRuntimeConfig()
 const username = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const loading = ref(false)
-
-const router = useRouter()
-
-import { useCookie } from '#app' // обязательно
-
 async function register() {
   errorMessage.value = ''
   loading.value = true
   try {
-    const res = await fetch('http://127.0.0.1:8000/auth/register', {
+    const res = await fetch(`${config.public.apiUrl}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -232,17 +226,13 @@ async function register() {
         is_api_user: false,
       }),
     })
-
     if (!res.ok) {
       const err = await res.json()
       throw new Error(err.detail || 'Ошибка регистрации')
     }
-
     const data = await res.json()
-
     const accessToken = data.access_token
     const returnedUsername = data.username
-
     if (accessToken) {
       localStorage.setItem('access_token', accessToken)
       localStorage.setItem('username', returnedUsername ?? 'Unknown')
@@ -257,5 +247,4 @@ async function register() {
     loading.value = false
   }
 }
-
 </script>
