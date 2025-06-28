@@ -2,7 +2,7 @@
 
 export async function apiFetch(url: string, options: any = {}) {
   const config = useRuntimeConfig()
-  const baseUrl = config.public.NUXT_PUBLIC_API_BASE || 'http://backend:8000'
+  const baseUrl = config.public.apiUrl
   const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : url
 
   try {
