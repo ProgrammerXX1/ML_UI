@@ -30,7 +30,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // Значение будет переопределяться из .env или docker-compose
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000'
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL
     }
   }
 })
