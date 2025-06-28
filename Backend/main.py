@@ -26,7 +26,8 @@ run_migrations()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://10.121.252.227:8000",
+        "http://10.121.252.227",
+        "http://10.121.252.227:3000",
         "http://10.121.252.227:8000"
     ],
     allow_credentials=True,
