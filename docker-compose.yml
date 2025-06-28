@@ -52,6 +52,11 @@ services:
       - ollama_data:/root/.ollama
     networks:
       - app-net
+    deploy: {}  # <- пустой блок, чтобы не было ошибки
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
 
 
 volumes:
