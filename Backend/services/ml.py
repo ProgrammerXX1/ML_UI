@@ -14,7 +14,7 @@ def generate_response(message: str) -> str:
             json={
                 "model": "llama3:latest",  # или другую модель, если нужно
                 "messages": [{"role": "user", "content": message}],
-                "stream": True
+                "stream": False
             },
             timeout=60
         )
