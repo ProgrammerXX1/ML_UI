@@ -177,7 +177,7 @@ const password = ref('')
 const login = async () => {
   try {
     const formData = new URLSearchParams()
-    formData.append('username', username.value)
+    formData.append('username', user.value)
     formData.append('password', password.value)
 
     const res = await fetch(`${config.public.apiUrl}/auth/login`, {
