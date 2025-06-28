@@ -226,25 +226,39 @@ async function register() {
         is_api_user: false,
       }),
     })
+
+    const contentType = res.headers.get('content-type') || ''
+
     if (!res.ok) {
+      // если ошибка и ответ — HTML, значит это не JSON (например, 404 страница)
+      if (!contentType.includes('application/json')) {
+        throw new Error('Сервер вернул некорректный ответ (не JSON)')
+      }
       const err = await res.json()
       throw new Error(err.detail || 'Ошибка регистрации')
     }
+
+    if (!contentType.includes('application/json')) {
+      throw new Error('Некорректный формат ответа сервера')
+    }
+
     const data = await res.json()
     const accessToken = data.access_token
     const returnedUsername = data.username
+
     if (accessToken) {
       localStorage.setItem('access_token', accessToken)
       localStorage.setItem('username', returnedUsername ?? 'Unknown')
-      navigateTo('/') // ✅ переход на главную страницу после регистрации
+      navigateTo('/') // переход на главную
     } else {
       alert('Ошибка: токен не получен')
     }
   } catch (err: any) {
     errorMessage.value = err.message || 'Не удалось зарегистрироваться'
-    console.error(err)
+    console.error('❌ Ошибка регистрации:', err)
   } finally {
     loading.value = false
   }
 }
+
 </script>

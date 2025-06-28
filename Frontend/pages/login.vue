@@ -188,7 +188,19 @@ const login = async () => {
       }
     })
 
-    if (!res.ok) throw new Error(`Ошибка входа: ${res.status}`)
+    const contentType = res.headers.get('content-type') || ''
+
+    if (!res.ok) {
+      if (!contentType.includes('application/json')) {
+        throw new Error('Сервер вернул не JSON (возможно 404 или 500)')
+      }
+      const err = await res.json()
+      throw new Error(err.detail || `Ошибка входа: ${res.status}`)
+    }
+
+    if (!contentType.includes('application/json')) {
+      throw new Error('Некорректный формат ответа сервера')
+    }
 
     const data = await res.json()
     const accessToken = data.access_token
@@ -202,10 +214,11 @@ const login = async () => {
     } else {
       alert('Ошибка: токен не получен')
     }
-  } catch (err) {
-    console.error('Ошибка входа:', err)
-    alert('Неверные данные для входа')
+  } catch (err: any) {
+    console.error('❌ Ошибка входа:', err)
+    alert(err.message || 'Неверные данные для входа')
   }
 }
+
 </script>
 
