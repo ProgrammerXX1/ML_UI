@@ -50,20 +50,16 @@ services:
       - "11435:11434"  # наружный порт -> внутренний Ollama API
     volumes:
       - ollama_data:/root/.ollama
+      - ./entrypoint.sh:/entrypoint.sh  # монтируем скрипт запуска
     networks:
       - app-net
     runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - OLLAMA_HOST=0.0.0.0
     command: >
-      bash -c "
-        ollama pull llama3 && 
-        ollama serve --host 0.0.0.0
-      "
-
-
-
+      bash -c "chmod +x /entrypoint.sh && /entrypoint.sh"
 
 volumes:
   ollama_data:
