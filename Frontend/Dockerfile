@@ -1,4 +1,4 @@
-# Используем официальный образ Node.js
+# Stage 1 — Сборка
 FROM node:18-alpine AS builder
 
 WORKDIR /app
@@ -7,16 +7,21 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Копируем весь проект и собираем
+# Копируем исходники и билдим
 COPY . .
 RUN npm run build
 
-# Стейдж для запуска приложения
+# Stage 2 — Продакшн-запуск
 FROM node:18-alpine
+
 WORKDIR /app
 
-# Копируем только собранные файлы и зависимости
-COPY --from=builder /app ./
+# Устанавливаем только продакшн-зависимости (если нужно)
+COPY --from=builder /app/.output ./.output
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
 
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+
+# Запуск Nuxt с серверным пререндером
+CMD ["node", ".output/server/index.mjs"]

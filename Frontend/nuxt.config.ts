@@ -1,36 +1,41 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+// nuxt.config.ts
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  ssr: true, // серверный рендеринг включён
+  target: 'server',
 
-  modules: [
-    "@nuxt/eslint",
-    "shadcn-nuxt",
-    "@nuxtjs/tailwindcss",
-    "@nuxtjs/color-mode"
-  ],
-
-  colorMode: {
-    classSuffix: ''
-  },
-
-  shadcn: {
-    prefix: '',
-    componentDir: './components/ui'
-  },
-
-  css: ['~/assets/css/main.css'],
-
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
-    },
+  devServer: {
+    host: '0.0.0.0',
+    port: 3000
   },
 
   runtimeConfig: {
     public: {
-      // Значение будет переопределяться из .env или docker-compose
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL
+      apiBase: process.env.API_BASE || 'http://localhost:8000' // URL FastAPI
     }
+  },
+
+  css: ['@/assets/css/tailwind.css'],
+
+  modules: [
+    '@nuxtjs/tailwindcss',
+    '@vueuse/nuxt'
+  ],
+
+  tailwindcss: {
+    viewer: false
+  },
+
+  app: {
+    head: {
+      title: 'Chat UI',
+      meta: [
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { name: 'description', content: 'Multichat system with ML backend' }
+      ]
+    }
+  },
+
+  nitro: {
+    preset: 'node-server', // для запуска в Docker/Node
   }
 })
