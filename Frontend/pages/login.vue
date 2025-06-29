@@ -177,7 +177,7 @@ const login = async () => {
     const formData = new URLSearchParams()
     formData.append('username', username.value)
     formData.append('password', password.value)
-    formData.append('grant_type', password.value)        // обязательно!
+    formData.append('grant_type', 'password')        // обязательно!
     formData.append('scope', '')                     // обязательно, даже если пусто
     formData.append('client_id', '')                 // обязательно, даже если пусто
     formData.append('client_secret', '')   

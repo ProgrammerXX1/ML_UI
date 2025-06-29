@@ -16,9 +16,4 @@ def authenticate_user(db: Session, username: str, password: str):
     user = db.query(User).filter(User.username == username).first()
     if not user or not verify_password(password, user.hashed_password):
         return None
-    print(f"🔍 Найден пользователь: {user.username}")
-    print(f"🔐 Хеш в БД: {user.hashed_password}")
-    print(f"🔑 Пароль введён: {password}")
-    print(f"✅ Пароль совпадает? {verify_password(password, user.hashed_password)}")
-
     return user
