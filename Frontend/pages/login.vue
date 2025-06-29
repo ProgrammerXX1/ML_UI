@@ -177,7 +177,7 @@ const password = ref('')
 const login = async () => {
   try {
     const formData = new URLSearchParams()
-    formData.append('username', user.value)
+    formData.append('username', username.value) // <-- тут было user.value (ошибка)
     formData.append('password', password.value)
 
     const res = await fetch(`${config.public.apiUrl}/auth/login`, {
@@ -219,6 +219,7 @@ const login = async () => {
     alert(err.message || 'Неверные данные для входа')
   }
 }
+
 
 </script>
 
