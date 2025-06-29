@@ -177,6 +177,10 @@ const login = async () => {
     const formData = new URLSearchParams()
     formData.append('username', username.value)
     formData.append('password', password.value)
+    formData.append('grant_type', password.value)        // обязательно!
+    formData.append('scope', '')                     // обязательно, даже если пусто
+    formData.append('client_id', '')                 // обязательно, даже если пусто
+    formData.append('client_secret', '')   
     const res = await fetch(`${config.public.apiUrl}/auth/login`, {
       method: 'POST',
       body: formData,
@@ -197,8 +201,10 @@ const login = async () => {
     }
     const data = await res.json()
     const accessToken = data.access_token
+    const returnedUsername = data.username
     if (accessToken) {
       localStorage.setItem('access_token', accessToken)
+      localStorage.setItem('username', returnedUsername ?? 'Unknown')
       cookieToken.value = accessToken
       navigateTo('/')
     } else {
