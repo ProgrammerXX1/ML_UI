@@ -168,18 +168,15 @@ button, a, input {
 <script setup lang="ts">
 import { ref } from 'vue'
 import { navigateTo, useRuntimeConfig, useCookie } from '#app'
-
 const config = useRuntimeConfig()
-
 const username = ref('')
 const password = ref('')
-
+const cookieToken = useCookie('access_token') // вынесено вне login()
 const login = async () => {
   try {
     const formData = new URLSearchParams()
-    formData.append('username', username.value) // <-- тут было user.value (ошибка)
+    formData.append('username', username.value)
     formData.append('password', password.value)
-
     const res = await fetch(`${config.public.apiUrl}/auth/login`, {
       method: 'POST',
       body: formData,
@@ -187,9 +184,7 @@ const login = async () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
-
     const contentType = res.headers.get('content-type') || ''
-
     if (!res.ok) {
       if (!contentType.includes('application/json')) {
         throw new Error('Сервер вернул не JSON (возможно 404 или 500)')
@@ -197,19 +192,16 @@ const login = async () => {
       const err = await res.json()
       throw new Error(err.detail || `Ошибка входа: ${res.status}`)
     }
-
     if (!contentType.includes('application/json')) {
       throw new Error('Некорректный формат ответа сервера')
     }
-
     const data = await res.json()
     const accessToken = data.access_token
     const returnedUsername = data.username
-
     if (accessToken) {
       localStorage.setItem('access_token', accessToken)
       localStorage.setItem('username', returnedUsername ?? 'Unknown')
-      useCookie('access_token').value = accessToken
+      cookieToken.value = accessToken
       navigateTo('/')
     } else {
       alert('Ошибка: токен не получен')
@@ -219,7 +211,6 @@ const login = async () => {
     alert(err.message || 'Неверные данные для входа')
   }
 }
-
-
 </script>
+
 
