@@ -29,9 +29,8 @@ services:
       - OLLAMA_BASE_URL=http://10.121.252.227:11434  # 👈 здесь укажи реальный IP
     ports:
       - "8000:8000"
-    networks:
-      - app-net
-    network_mode: bridge
+    networks: 
+      - app-net 
 
   frontend:
     build: ./frontend
