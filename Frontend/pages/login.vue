@@ -197,10 +197,8 @@ const login = async () => {
     }
     const data = await res.json()
     const accessToken = data.access_token
-    const returnedUsername = data.username
     if (accessToken) {
       localStorage.setItem('access_token', accessToken)
-      localStorage.setItem('username', returnedUsername ?? 'Unknown')
       cookieToken.value = accessToken
       navigateTo('/')
     } else {
