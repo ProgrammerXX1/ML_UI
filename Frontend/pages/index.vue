@@ -21,91 +21,119 @@
       </svg>
     </div>
     <!-- Sidebar (Desktop) -->
-    <aside class="fixed inset-y-0 left-0 z-20 w-64 flex-col border-r border-indigo-700/50 bg-gray-900/30 backdrop-blur-lg hidden sm:flex">
-      <nav class="flex flex-col gap-6 px-4 py-6 text-lg font-medium">
-        <a href="#" class="group flex items-center justify-center h-12 w-full rounded-lg bg-gradient-to-r from-red-600 to-purple-600 text-black transition-all duration-300 hover:from-blue-500 hover:to-purple-500 shadow-glow">
-          <svg class="h-8 w-8 animate-neural-network" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <g class="nodes">
-              <circle cx="50" cy="50" r="10" fill="none" stroke="#a5b4fc" stroke-width="2" class="node node-center" />
-              <circle cx="30" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-top-left" />
-              <circle cx="70" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-top-right" />
-              <circle cx="30" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-left" />
-              <circle cx="70" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-right" />
-            </g>
-            <g class="connections">
-              <path d="M50 50 L30 30" stroke="#60a5fa" stroke-width="1" class="connection" />
-              <path d="M50 50 L70 30" stroke="#60a5fa" stroke-width="1" class="connection" />
-              <path d="M50 50 L30 70" stroke="#60a5fa" stroke-width="1" class="connection" />
-              <path d="M50 50 L70 70" stroke="#60a5fa" stroke-width="1" class="connection" />
-            </g>
-          </svg>
-          <span class="ml-2 text-sm font-semibold animate-flicker">NeuralNet AI</span>
-        </a>
-        <a href="#" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
-          <Home class="h-5 w-5" /> Tester
-        </a>
-        <a href="#" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
-          <ShoppingCart class="h-5 w-5" /> Orders
-        </a>
-        <a href="#" class="flex items-center gap-4 px-2.5 text-white bg-indigo-700/50 rounded-lg py-2 shadow-glow">
-          <Package class="h-5 w-5" /> Chats
-        </a>
-        <a href="#" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
-          <Users2 class="h-5 w-5" /> Customers
-        </a>
-        <a href="#" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
-          <LineChart class="h-5 w-5" /> Settings
-        </a>
-      </nav>
-    </aside>
+<aside class="fixed inset-y-0 left-0 z-20 w-64 flex-col border-r border-indigo-700/50 bg-gray-900/30 backdrop-blur-lg hidden sm:flex">
+  <nav class="flex flex-col gap-6 px-4 py-6 text-lg font-medium">
+    
+    <NuxtLink
+      to="/"
+      class="group flex items-center justify-center h-12 w-full rounded-lg bg-gradient-to-r from-red-600 to-purple-600 text-black transition-all duration-300 hover:from-blue-500 hover:to-purple-500 shadow-glow"
+    >
+      <svg class="h-8 w-8 animate-neural-network" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <g class="nodes">
+          <circle cx="50" cy="50" r="10" fill="none" stroke="#a5b4fc" stroke-width="2" />
+          <circle cx="30" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" />
+          <circle cx="70" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" />
+          <circle cx="30" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" />
+          <circle cx="70" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" />
+        </g>
+        <g class="connections">
+          <path d="M50 50 L30 30" stroke="#60a5fa" stroke-width="1" />
+          <path d="M50 50 L70 30" stroke="#60a5fa" stroke-width="1" />
+          <path d="M50 50 L30 70" stroke="#60a5fa" stroke-width="1" />
+          <path d="M50 50 L70 70" stroke="#60a5fa" stroke-width="1" />
+        </g>
+      </svg>
+      <span class="ml-2 text-sm font-semibold animate-flicker">NeuralNet AI</span>
+    </NuxtLink>
+
+    <a
+      href="#"
+      class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow"
+      @click="showUnderDevelopment"
+    >
+      <Home class="h-5 w-5" /> Tester
+    </a>
+
+    <NuxtLink
+      to="/gen_api"
+      class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow"
+    >
+      <ShoppingCart class="h-5 w-5" /> API Key
+    </NuxtLink>
+
+    <NuxtLink
+      to="/dashboard"
+      class="flex items-center gap-4 px-2.5 text-white bg-indigo-700/50 rounded-lg py-2 shadow-glow"
+    >
+      <Package class="h-5 w-5" /> Chats
+    </NuxtLink>
+
+    <a
+      href="#"
+      class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow"
+      @click="showUnderDevelopment"
+    >
+      <Users2 class="h-5 w-5" /> Customers
+    </a>
+
+    <a
+      href="#"
+      class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow"
+      @click="showUnderDevelopment"
+    >
+      <LineChart class="h-5 w-5" /> Settings
+    </a>
+  </nav>
+</aside>
+
     <!-- Main Layout -->
     <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-64">
-      <header class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-indigo-700/50 bg-gray-900/30 backdrop-blur-lg px-4 sm:px-6">
-        <Sheet>
-          <SheetTrigger as-child>
-            <Button size="icon" variant="outline" class="sm:hidden text-white border-indigo-700 hover:bg-indigo-800/50 shadow-glow">
-              <PanelLeft class="h-5 w-5" />
-              <span class="sr-only">Toggle Menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" class="sm:max-w-xs bg-gray-900/30 text-white border-indigo-700/50 backdrop-blur-lg">
-            <nav class="grid gap-6 text-lg font-medium">
-              <a href="#" class="group flex items-center justify-start h-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-all duration-300 hover:from-blue-500 hover:to-purple-500 shadow-glow">
-                <svg class="h-8 w-8 ml-2 animate-neural-network" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                  <g class="nodes">
-                    <circle cx="50" cy="50" r="10" fill="none" stroke="#a5b4fc" stroke-width="2" class="node node-center" />
-                    <circle cx="30" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-top-left" />
-                    <circle cx="70" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-top-right" />
-                    <circle cx="30" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-left" />
-                    <circle cx="70" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-right" />
-                  </g>
-                  <g class="connections">
-                    <path d="M50 50 L30 30" stroke="#60a5fa" stroke-width="1" class="connection" />
-                    <path d="M50 50 L70 30" stroke="#60a5fa" stroke-width="1" class="connection" />
-                    <path d="M50 50 L30 70" stroke="#60a5fa" stroke-width="1" class="connection" />
-                    <path d="M50 50 L70 70" stroke="#60a5fa" stroke-width="1" class="connection" />
-                  </g>
-                </svg>
-                <span class="ml-2 text-sm font-semibold animate-flicker">NeuralNet AI</span>
-              </a>
-              <a href="#" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
-                <Home class="h-5 w-5" /> Tester
-              </a>
-              <a href="#" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
-                <ShoppingCart class="h-5 w-5" /> Orders
-              </a>
-              <a href="#" class="flex items-center gap-4 px-2.5 text-white bg-indigo-700/50 rounded-lg py-2 shadow-glow">
-                <Package class="h-5 w-5" /> Chats
-              </a>
-              <a href="#" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
-                <Users2 class="h-5 w-5" /> Customers
-              </a>
-              <a href="#" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
-                <LineChart class="h-5 w-5" /> Settings
-              </a>
-            </nav>
-          </SheetContent>
-        </Sheet>
+  <header class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-indigo-700/50 bg-gray-900/30 backdrop-blur-lg px-4 sm:px-6">
+    <Sheet>
+      <SheetTrigger as-child>
+        <Button size="icon" variant="outline" class="sm:hidden text-white border-indigo-700 hover:bg-indigo-800/50 shadow-glow">
+          <PanelLeft class="h-5 w-5" />
+          <span class="sr-only">Toggle Menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" class="sm:max-w-xs bg-gray-900/30 text-white border-indigo-700/50 backdrop-blur-lg">
+        <nav class="grid gap-6 text-lg font-medium">
+          <NuxtLink to="/" class="group flex items-center justify-start h-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-all duration-300 hover:from-blue-500 hover:to-purple-500 shadow-glow">
+            <svg class="h-8 w-8 ml-2 animate-neural-network" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <g class="nodes">
+                <circle cx="50" cy="50" r="10" fill="none" stroke="#a5b4fc" stroke-width="2" class="node node-center" />
+                <circle cx="30" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-top-left" />
+                <circle cx="70" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-top-right" />
+                <circle cx="30" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-left" />
+                <circle cx="70" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-right" />
+              </g>
+              <g class="connections">
+                <path d="M50 50 L30 30" stroke="#60a5fa" stroke-width="1" class="connection" />
+                <path d="M50 50 L70 30" stroke="#60a5fa" stroke-width="1" class="connection" />
+                <path d="M50 50 L30 70" stroke="#60a5fa" stroke-width="1" class="connection" />
+                <path d="M50 50 L70 70" stroke="#60a5fa" stroke-width="1" class="connection" />
+              </g>
+            </svg>
+            <span class="ml-2 text-sm font-semibold animate-flicker">NeuralNet AI</span>
+          </NuxtLink>
+          <NuxtLink to="#" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+            <Home class="h-5 w-5" /> Tester
+          </NuxtLink>
+          <NuxtLink to="/gen_api" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+            <ShoppingCart class="h-5 w-5" /> API Key
+          </NuxtLink>
+          <NuxtLink to="/dashboard" class="flex items-center gap-4 px-2.5 text-white bg-indigo-700/50 rounded-lg py-2 shadow-glow">
+            <Package class="h-5 w-5" /> Chats
+          </NuxtLink>
+          <NuxtLink to="#" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+            <Users2 class="h-5 w-5" /> Customers
+          </NuxtLink>
+          <NuxtLink to="#" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+            <LineChart class="h-5 w-5" /> Settings
+          </NuxtLink>
+        </nav>
+      </SheetContent>
+    </Sheet>
         <!-- Breadcrumb -->
         <Breadcrumb class="hidden md:flex text-gray-300 animate-glow-text">
           <BreadcrumbList>
@@ -356,7 +384,7 @@ const isLoading = ref(false)
 const config = useRuntimeConfig()
 const API_BASE = config.public.NUXT_PUBLIC_API_URL
 
-
+router.push('/gen_api')
 type ChatStatus = 'Active' | 'Draft' | 'Archived'
 
 import {
@@ -445,7 +473,9 @@ function changeTab(tab: typeof activeTab.value) {
 function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) currentPage.value = page
 }
-
+const goToApiPage = () => {
+  router.push('/gen_api')
+}
 // Обработка двойного клика
 async function handleChatClick(chatId: number) {
   const now = Date.now()
