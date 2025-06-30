@@ -20,9 +20,150 @@
         </g>
       </svg>
     </div>
-    <AppSidebar />
+    <!-- Sidebar (Desktop) -->
+    <aside class="fixed inset-y-0 left-0 z-20 w-64 flex-col border-r border-indigo-700/50 bg-gray-900/30 backdrop-blur-lg hidden sm:flex">
+      <nav class="flex flex-col gap-6 px-4 py-6 text-lg font-medium">
+        <a href="/" class="group flex items-center justify-center h-12 w-full rounded-lg bg-gradient-to-r from-red-600 to-purple-600 text-black transition-all duration-300 hover:from-blue-500 hover:to-purple-500 shadow-glow">
+          <svg class="h-8 w-8 animate-neural-network" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <g class="nodes">
+              <circle cx="50" cy="50" r="10" fill="none" stroke="#a5b4fc" stroke-width="2" class="node node-center" />
+              <circle cx="30" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-top-left" />
+              <circle cx="70" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node-coffee" />
+              <circle cx="30" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-left" />
+              <circle cx="70" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-right" />
+            </g>
+            <g class="connections">
+              <path d="M50 50 L30 30" stroke="#60a5fa" stroke-width="1" class="connection" />
+              <path d="M50 50 L70 30" stroke="#60a5fa" stroke-width="1" class="connection" />
+              <path d="M50 50 L30 70" stroke="#60a5fa" stroke-width="1" class="connection" />
+              <path d="M50 50 L70 70" stroke="#60a5fa" stroke-width="1" class="connection" />
+            </g>
+          </svg>
+          <span class="ml-2 text-sm font-semibold animate-flicker">NeuralNet AI</span>
+        </a>
+        <a href="/" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
+          <Home class="h-5 w-5" /> Tester
+        </a>
+        <a href="/orders" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @ tapas="showUnderDevelopment">
+          <ShoppingCart class="h-5 w-5" /> Orders
+        </a>
+        <a href="/chats" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
+          <Package class="h-5 w-5" /> Chats
+        </a>
+        <a href="/customers" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
+          <Users2 class="h-5 w-5" /> Customers
+        </a>
+        <a href="/api-keys" class="flex items-center gap-4 px-2.5 text-white bg-indigo-700/50 rounded-lg py-2 shadow-glow">
+          <Key class="h-5 w-5" /> API Keys
+        </a>
+        <a href="/settings" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
+          <LineChart class="h-5 w-5" /> Settings
+        </a>
+      </nav>
+    </aside>
+    <!-- Main Layout -->
     <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-64">
-      <AppHeader />
+      <header class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-indigo-700/50 bg-gray-900/30 backdrop-blur-lg px-4 sm:px-6">
+        <Sheet>
+          <SheetTrigger as-child>
+            <Button size="icon" variant="outline" class="sm:hidden text-white border-indigo-700 hover:bg-indigo-800/50 shadow-glow">
+              <PanelLeft class="h-5 w-5" />
+              <span class="sr-only">Toggle Menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" class="sm:max-w-xs bg-gray-900/30 text-white border-indigo-700/50 backdrop-blur-lg">
+            <nav class="grid gap-6 text-lg font-medium">
+              <a href="/" class="group flex items-center justify-start h-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-all duration-300 hover:from-blue-500 hover:to-purple-500 shadow-glow">
+                <svg class="h-8 w-8 ml-2 animate-neural-network" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <g class="nodes">
+                    <circle cx="50" cy="50" r="10" fill="none" stroke="#a5b4fc" stroke-width="2" class="node node-center" />
+                    <circle cx="30" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-top-left" />
+                    <circle cx="70" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-top-right" />
+                    <circle cx="30" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-left" />
+                    <circle cx="70" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-right" />
+                  </g>
+                  <g class="connections">
+                    <path d="M50 50 L30 30" stroke="#60a5fa" stroke-width="1" class="connection" />
+                    <path d="M50 50 L70 30" stroke="#60a5fa" stroke-width="1" class="connection" />
+                    <path d="M50 50 L30 70" stroke="#60a5fa" stroke-width="1" class="connection" />
+                    <path d="M50 50 L70 70" stroke="#60a5fa" stroke-width="1" class="connection" />
+                  </g>
+                </svg>
+                <span class="ml-2 text-sm font-semibold animate-flicker">NeuralNet AI</span>
+              </a>
+              <a href="/" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
+                <Home class="h-5 w-5" /> Tester
+              </a>
+              <a href="/orders" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
+                <ShoppingCart class="h-5 w-5" /> Orders
+              </a>
+              <a href="/chats" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
+                <Package class="h-5 w-5" /> Chats
+              </a>
+              <a href="/customers" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
+                <Users2 class="h-5 w-5" /> Customers
+              </a>
+              <a href="/api-keys" class="flex items-center gap-4 px-2.5 text-white bg-indigo-700/50 rounded-lg py-2 shadow-glow">
+                <Key class="h-5 w-5" /> API Keys
+              </a>
+              <a href="/settings" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow" @click="showUnderDevelopment">
+                <LineChart class="h-5 w-5" /> Settings
+              </a>
+            </nav>
+          </SheetContent>
+        </Sheet>
+        <!-- Breadcrumb -->
+        <Breadcrumb class="hidden md:flex text-gray-300 animate-glow-text">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink as-child><a href="/" class="hover:text-white transition-colors">Dashboard</a></BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem><BreadcrumbPage>API Keys</BreadcrumbPage></BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <!-- Search Bar -->
+        <div class="relative ml-auto flex-1 md:grow-0">
+          <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+          <Input
+            v-model="searchQuery"
+            type="search"
+            placeholder="Search..."
+            class="w-full rounded-lg bg-gray-800/20 text-white placeholder-gray-400 pl-8 border border-indigo-700/50 focus:border-purple-500 transition-all duration-300 hover:scale-[1.02] shadow-glow md:w-[200px] lg:w-[320px]"
+          />
+        </div>
+        <!-- Theme Switch -->
+        <DropdownMenu>
+          <DropdownMenuTrigger as-child>
+            <Button variant="outline" class="text-white border-indigo-700/50 hover:bg-indigo-800/50 transition-all duration-300 shadow-glow">
+              <Icon icon="radix-icons:moon" class="h-5 w-5 dark:hidden" />
+              <Icon icon="radix-icons:sun" class="h-5 w-5 hidden dark:block" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" class="bg-gray-800/30 text-white border border-indigo-700/50 backdrop-blur-lg">
+            <DropdownMenuItem @click="colorMode = 'light'" class="hover:bg-indigo-700/50">Light</DropdownMenuItem>
+            <DropdownMenuItem @click="colorMode = 'dark'" class="hover:bg-indigo-700/50">Dark</DropdownMenuItem>
+            <DropdownMenuItem @click="colorMode = 'system'" class="hover:bg-indigo-700/50">System</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <!-- Profile -->
+        <DropdownMenu>
+          <DropdownMenuTrigger as-child>
+            <Button variant="secondary" size="icon" class="rounded-full bg-indigo-700 hover:bg-indigo-600 transition-all duration-300 shadow-glow">
+              <CircleUser class="h-5 w-5 text-white" />
+              <span class="sr-only">Toggle user menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" class="bg-gray-800/30 text-white border border-indigo-700/50 backdrop-blur-lg">
+            <DropdownMenuLabel>Acc: {{ username }}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem @click="showUnderDevelopment" class="hover:bg-indigo-700/50">Settings</DropdownMenuItem>
+            <DropdownMenuItem @click="showUnderDevelopment" class="hover:bg-indigo-700/50">Support</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem @click="logout" class="hover:bg-indigo-700/50">Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </header>
       <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 md:gap-8">
         <Tabs v-model="activeTab">
           <div class="flex items-center">
@@ -77,7 +218,7 @@
                       <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                           <Button aria-haspopup="true" size="icon" variant="ghost" class="text-white hover:bg-indigo-800/50 shadow-glow">
-                            <MoreHorizontal class="optimistic h-4 w-4" />
+                            <MoreHorizontal class="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" class="bg-gray-800/30 text-white border border-indigo-700/50 backdrop-blur-lg">
@@ -137,16 +278,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAsyncData } from '#imports'
+import { useAsyncData, useRuntimeConfig } from '#app'
 import { apiFetch } from '~/utils/api'
-import { useRuntimeConfig } from '#app'
-import AppSidebar from '~/components/AppSidebar.vue'
-import AppHeader from '~/components/AppHeader.vue'
-import { Copy, Key, MoreHorizontal, PlusCircle } from 'lucide-vue-next'
+import { CircleUser, Copy, Home, LineChart, MoreHorizontal, Package, PanelLeft, PlusCircle, Search, ShoppingCart, Users2, Key } from 'lucide-vue-next'
+import { Icon } from '@iconify/vue'
 
-const router = useRouter()
+const username = ref('Гость')
 const activeTab = ref<'all' | 'Active' | 'Inactive'>('all')
+const searchQuery = ref('')
+const colorMode = ref('dark')
 const currentPage = ref(1)
 const itemsPerPage = 4
 const isLoading = ref(false)
@@ -185,7 +325,8 @@ async function fetchWithToken<T>(url: string, options: RequestInit = {}): Promis
 
 const { data: fetchedKeys, refresh } = await useAsyncData('api-keys', async () => {
   try {
-    const res = await fetchWithToken<any[]>('/api/keys/list')
+    isLoading.value = true
+    const res = await fetchWithToken<any[]>(`${API_BASE}/api/keys/list`)
     return res.map(key => ({
       id: Number(key.id),
       key: key.key || 'Unknown',
@@ -195,6 +336,8 @@ const { data: fetchedKeys, refresh } = await useAsyncData('api-keys', async () =
   } catch (err) {
     console.error('Ошибка при загрузке API ключей', err)
     return []
+  } finally {
+    isLoading.value = false
   }
 }, { server: false })
 
@@ -204,6 +347,7 @@ watch(fetchedKeys, (newKeys) => {
 
 const filteredKeys = computed(() =>
   apiKeys.value.filter(k =>
+    k.key.toLowerCase().includes(searchQuery.value.toLowerCase()) &&
     (activeTab.value === 'all' || k.status === activeTab.value)
   )
 )
@@ -226,7 +370,8 @@ function goToPage(page: number) {
 
 async function generateApiKey() {
   try {
-    const res = await fetchWithToken<ApiKey>('/api/keys/create', {
+    isLoading.value = true
+    const res = await fetchWithToken<ApiKey>(`${API_BASE}/api/keys/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'Active' })
@@ -235,17 +380,22 @@ async function generateApiKey() {
   } catch (err) {
     console.error('Ошибка при создании API ключа', err)
     alert('Ошибка при создании API ключа')
+  } finally {
+    isLoading.value = false
   }
 }
 
 async function deleteKey(keyId: number) {
   if (!confirm('Удалить API ключ?')) return
   try {
-    await fetchWithToken(`/api/keys/${keyId}`, { method: 'DELETE' })
+    isLoading.value = true
+    await fetchWithToken(`${API_BASE}/api/keys/${keyId}`, { method: 'DELETE' })
     await refresh()
   } catch (err) {
     console.error('Ошибка при удалении API ключа', err)
     alert('Ошибка при удалении API ключа')
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -257,6 +407,14 @@ async function copyKey(key: string) {
     console.error('Ошибка при копировании ключа', err)
     alert('Ошибка при копировании ключа')
   }
+}
+
+function showUnderDevelopment() {
+  alert('Функция в разработке')
+}
+
+function logout() {
+  showUnderDevelopment()
 }
 
 onMounted(() => {
@@ -334,6 +492,9 @@ onMounted(() => {
   onUnmounted(() => {
     window.removeEventListener('resize', resize)
   })
+
+  const stored = localStorage.getItem('username')
+  if (stored && stored !== 'undefined') username.value = stored
 })
 
 definePageMeta({ middleware: ['auth'] })
