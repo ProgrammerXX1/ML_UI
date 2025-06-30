@@ -8,6 +8,11 @@ from alembic.config import Config
 from alembic import command
 import os
 import logging
+
+from dotenv import load_dotenv
+load_dotenv()
+PORT_SERVER = os.getenv("PORT_SERVER", "http://localhost")
+
 app = FastAPI()
 
 # Миграции Alembic
@@ -26,9 +31,9 @@ run_migrations()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://10.121.252.227",
-        "http://10.121.252.227:3000",
-        "http://10.121.252.227:8000"
+            PORT_SERVER,
+            f"{PORT_SERVER}:3000",
+            f"{PORT_SERVER}:8000"
     ],
     allow_credentials=True,
     allow_methods=["*"],
