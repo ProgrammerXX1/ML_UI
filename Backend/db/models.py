@@ -11,6 +11,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     is_api_user = Column(Boolean, default=False)
     api_key = Column(String, unique=True, nullable=True)
+    api_keys = relationship("APIKey", back_populates="user", cascade="all, delete")
 
     chats = relationship("Chat", back_populates="user", cascade="all, delete-orphan")
     chat_logs = relationship("ChatLog", back_populates="user", cascade="all, delete-orphan")
@@ -42,3 +43,14 @@ class ChatLog(Base):
 
     user = relationship("User", back_populates="chat_logs")
     chat = relationship("Chat", back_populates="messages")
+
+    # db/models.py
+class APIKey(Base):
+    __tablename__ = "api_keys"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
+    key = Column(String, unique=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="api_keys")

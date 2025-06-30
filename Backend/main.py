@@ -3,13 +3,12 @@ from app import auth
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
 import subprocess
-from backend.app.routes import chat,api_chat
+from backend.app.routes import api_keys, chat
 from db.session import engine
 from alembic.config import Config
 from alembic import command
 import os
 import logging
-
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -44,7 +43,7 @@ app.add_middleware(
 # Роуты
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(chat.router, tags=["Chat"])
-app.include_router(api_chat.router, prefix="/api", tags=["API Chat"])
+app.include_router(chat.router, tags=["API Keys"])
 # OpenAPI с BearerAuth
 def custom_openapi():
     if app.openapi_schema:
