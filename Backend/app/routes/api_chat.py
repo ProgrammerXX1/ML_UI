@@ -12,7 +12,7 @@ from schemas.chat import (
 )
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/api")  # ⬅️ Внешний префикс
+router = APIRouter()  # ⬅️ Внешний префикс
 
 # 🔐 Получение пользователя по api_key
 def get_user_by_api_key(request: Request, db: Session):
