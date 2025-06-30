@@ -51,7 +51,7 @@
       <ShoppingCart class="h-5 w-5" /> Orders
     </NuxtLink>
 
-    <NuxtLink to="/chats" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+    <NuxtLink to="/" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
       <Package class="h-5 w-5" /> Chats
     </NuxtLink>
 
@@ -111,7 +111,7 @@
         <ShoppingCart class="h-5 w-5" /> Orders
       </NuxtLink>
 
-      <NuxtLink to="/chats" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+      <NuxtLink to="/" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
         <Package class="h-5 w-5" /> Chats
       </NuxtLink>
 
