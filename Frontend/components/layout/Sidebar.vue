@@ -5,7 +5,7 @@
     <aside class="fixed inset-y-0 left-0 z-20 w-64 flex-col border-r border-indigo-700/50 bg-gray-900/30 backdrop-blur-lg hidden sm:flex">
       <nav class="flex flex-col gap-6 px-4 py-6 text-lg font-medium">
         <NuxtLink
-          to="/"
+          to="/chat"
           class="group flex items-center justify-center h-12 w-full rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-all duration-300 hover:from-blue-500 hover:to-purple-500 shadow-glow"
         >
           <span class="ml-2 text-sm font-semibold animate-flicker">NeuralNet AI</span>

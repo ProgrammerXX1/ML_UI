@@ -90,8 +90,8 @@
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" class="bg-gray-800/30 text-white border border-indigo-700/50 backdrop-blur-lg">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem @click="emit('editChat', chat)" class="hover:bg-indigo-700/50">Edit</DropdownMenuItem>
-                      <DropdownMenuItem @click="emit('deleteChat', chat.id)" class="hover:bg-indigo-700/50">Delete</DropdownMenuItem>
+                      <DropdownMenuItem @click="emit('editChat', chat); menuOpen = false" class="hover:bg-indigo-700/50">Edit</DropdownMenuItem>
+                      <DropdownMenuItem @click="emit('deleteChat', chat.id); menuOpen = false" class="hover:bg-indigo-700/50">Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -149,7 +149,7 @@ const props = defineProps<{
   chats: Chat[]
   isLoading: boolean
 }>()
-
+const menuOpen = ref(false)
 const emit = defineEmits<{
   (e: 'chatClick', id: number): void
   (e: 'editChat', chat: Chat): void

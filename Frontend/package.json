@@ -17,6 +17,7 @@
     "@pinia/nuxt": "^0.11.1",
     "@vueuse/core": "^10.10.0",
     "@vueuse/nuxt": "13.4.0",
+    "chart.js": "^4.5.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-vue-next": "^0.381.0",
