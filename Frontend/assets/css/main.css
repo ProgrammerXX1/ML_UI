@@ -1,78 +1,296 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
- 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 20 14.3% 4.1%;
- 
-    --muted: 60 4.8% 95.9%;
-    --muted-foreground: 25 5.3% 44.7%;
- 
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 14.3% 4.1%;
- 
-    --card: 0 0% 100%;
-    --card-foreground: 20 14.3% 4.1%;
- 
-    --border: 20 5.9% 90%;
-    --input: 20 5.9% 90%;
- 
-    --primary: 24 9.8% 10%;
-    --primary-foreground: 60 9.1% 97.8%;
- 
-    --secondary: 60 4.8% 95.9%;
-    --secondary-foreground: 24 9.8% 10%;
- 
-    --accent: 60 4.8% 95.9%;
-    --accent-foreground: 24 9.8% 10%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 60 9.1% 97.8%;
- 
-    --ring: 20 14.3% 4.1%;
- 
-    --radius: 0.5rem;
-  }
- 
-  .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 60 9.1% 97.8%;
- 
-    --muted: 12 6.5% 15.1%;
-    --muted-foreground: 24 5.4% 63.9%;
- 
-    --popover: 20 14.3% 4.1%;
-    --popover-foreground: 60 9.1% 97.8%;
- 
-    --card: 20 14.3% 4.1%;
-    --card-foreground: 60 9.1% 97.8%;
- 
-    --border: 12 6.5% 15.1%;
-    --input: 12 6.5% 15.1%;
- 
-    --primary: 60 9.1% 97.8%;
-    --primary-foreground: 24 9.8% 10%;
- 
-    --secondary: 12 6.5% 15.1%;
-    --secondary-foreground: 60 9.1% 97.8%;
- 
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 60 9.1% 97.8%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 60 9.1% 97.8%;
- 
-    --ring: 24 5.7% 82.9%;
-  }
+/* Базовые стили */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
- 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+
+/* Фоновая градиентная заливка (для тёмной темы по умолчанию) */
+.bg-gradient-to-br {
+  background: linear-gradient(to bottom right, #111827, #1e1b4b, #4c1d95);
+}
+
+/* Анимации нейронной сети */
+.animate-neural-network .nodes {
+  animation: rotate 20s linear infinite;
+}
+
+.animate-neural-network .node {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.animate-neural-network .node-top-left { animation-delay: 0s; }
+.animate-neural-network .node-top-right { animation-delay: 0.2s; }
+.animate-neural-network .node-bottom-left { animation-delay: 0.4s; }
+.animate-neural-network .node-bottom-right { animation-delay: 0.6s; }
+.animate-neural-network .node-center { animation-delay: 0.8s; }
+.animate-neural-network .connection {
+  animation: connect 2s infinite ease-in-out;
+}
+
+/* Анимация нижнего левого вихря */
+.animate-neural-vortex .nodes {
+  animation: spiral 10s linear infinite;
+}
+
+.animate-neural-vortex .node {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.animate-neural-vortex .node-1 { animation-delay: 0s; }
+.animate-neural-vortex .node-2 { animation-delay: 0.3s; }
+.animate-neural-vortex .node-3 { animation-delay: 0.6s; }
+.animate-neural-vortex .node-main { animation-delay: 0.9s; }
+.animate-neural-vortex .connection {
+  animation: connect 2s infinite ease-in-out;
+}
+
+.animate-neural-vortex .signal-pulse {
+  animation: signal-pulse 5s infinite ease-in-out;
+}
+
+/* Анимация частиц для регистрации */
+.converging-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #60a5fa;
+  border-radius: 50%;
+  animation: converge 7s linear forwards;
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.7);
+}
+
+.center-node {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #c084fc;
+  border-radius: 50%;
+  animation: pulse-node 7s infinite ease-in-out;
+  box-shadow: 0 0 15px rgba(192, 132, 252, 0.7);
+}
+
+.particle-1 { top: 0; left: 0; animation-delay: 0s; transform: translate(-100px, -100px); }
+.particle-2 { top: 0; right: 0; animation-delay: 0.2s; transform: translate(100px, -100px); }
+.particle-3 { bottom: 0; left: 0; animation-delay: 0.4s; transform: translate(-100px, 100px); }
+.particle-4 { bottom: 0; right: 0; animation-delay: 0.6s; transform: translate(100px, 100px); }
+.particle-5 { top: 50%; left: 0; animation-delay: 0.8s; transform: translate(-120px, 0); }
+.particle-6 { top: 50%; right: 0; animation-delay: 1s; transform: translate(120px, 0); }
+.particle-7 { top: 0; left: 50%; animation-delay: 1.2s; transform: translate(0, -120px); }
+.particle-8 { bottom: 0; left: 50%; animation-delay: 1.4s; transform: translate(0, 120px); }
+
+/* Анимация кольца обработки для страницы входа */
+.processing-ring {
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-top-color: #60a5fa;
+  border-right-color: #c084fc;
+  border-radius: 50%;
+  animation: spin 7s linear infinite;
+  box-shadow: 0 0 15px rgba(96, 165, 250, 0.5);
+}
+
+/* Анимации */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes connect {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spiral {
+  0% { transform: rotate(0deg) translate(10px, 10px); }
+  100% { transform: rotate(360deg) translate(10px, 10px); }
+}
+
+@keyframes signal-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes converge {
+  0% { transform: translate(0, 0); opacity: 1; }
+  70% { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(0, 0); opacity: 0; }
+}
+
+@keyframes pulse-node {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.5); opacity: 1; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes glow-text {
+  0%, 100% { text-shadow: 0 0 5px rgba(165, 180, 252, 0.5); }
+  50% { text-shadow: 0 0 10px rgba(165, 180, 252, 0.8); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Классы анимаций */
+.animate-flicker {
+  animation: flicker 3s infinite ease-in-out;
+}
+
+.animate-glow-text {
+  animation: glow-text 2s infinite ease-in-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+/* Эффекты для интерактивных элементов */
+.shadow-glow {
+  box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+}
+
+.form-processing {
+  box-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+}
+
+button, a, input, select {
+  transition: all 0.3s ease;
+}
+
+/* Эффекты для строк таблицы */
+.quest-row {
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.quest-row:hover {
+  background-color: #1e1b4b;
+  transform: translateY(-2px);
+}
+
+/* Стили для тёмной темы (по умолчанию) */
+.bg-gray-900\/30 {
+  background: rgba(17, 24, 39, 0.3);
+}
+
+.text-gray-300 {
+  color: #d1d5db;
+}
+
+.text-gray-200 {
+  color: #e5e7eb;
+}
+
+.bg-gray-800\/20 {
+  background: rgba(31, 41, 55, 0.2);
+}
+
+.border-indigo-700\/50 {
+  border-color: rgba(99, 102, 241, 0.5);
+}
+
+.bg-indigo-700\/50 {
+  background: rgba(99, 102, 241, 0.5);
+}
+
+.bg-indigo-800\/50 {
+  background: rgba(79, 70, 229, 0.5);
+}
+
+.text-white {
+  color: #ffffff;
+}
+
+.bg-gradient-to-r {
+  background: linear-gradient(to right, #2563eb, #7c3aed);
+}
+
+.bg-gradient-to-r:hover {
+  background: linear-gradient(to right, #3b82f6, #9333ea);
+}
+
+.text-transparent {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.bg-clip-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+/* Стили для светлой темы */
+[data-theme="light"] {
+  background: linear-gradient(to bottom right, #e0e7ff, #c7d2fe, #a5b4fc);
+  color: #1f2937;
+}
+
+[data-theme="light"] .bg-gradient-to-br {
+  background: linear-gradient(to bottom right, #e0e7ff, #c7d2fe, #a5b4fc);
+}
+
+[data-theme="light"] .bg-gray-900\/30 {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="light"] .text-gray-300 {
+  color: #4b5563;
+}
+
+[data-theme="light"] .text-gray-200 {
+  color: #6b7280;
+}
+
+[data-theme="light"] .bg-gray-800\/20 {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="light"] .border-indigo-700\/50 {
+  border-color: rgba(79, 70, 229, 0.3);
+}
+
+[data-theme="light"] .bg-indigo-700\/50 {
+  background: rgba(99, 102, 241, 0.3);
+}
+
+[data-theme="light"] .bg-indigo-800\/50 {
+  background: rgba(79, 70, 229, 0.3);
+}
+
+[data-theme="light"] .text-white {
+  color: #1f2937;
+}
+
+[data-theme="light"] .bg-gradient-to-r {
+  background: linear-gradient(to right, #60a5fa, #c084fc);
+}
+
+[data-theme="light"] .bg-gradient-to-r:hover {
+  background: linear-gradient(to right, #3b82f6, #9333ea);
 }
