@@ -1,15 +1,17 @@
-export default defineNuxtRouteMiddleware((to, from) => {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('access_token')
+import { defineNuxtRouteMiddleware } from '#app'
+import { useUserStore } from '@/stores/user'
 
-    // ❌ Если токена нет — редирект на login
-    if (!token && to.path !== '/login') {
-      return navigateTo('/login')
-    }
+export default defineNuxtRouteMiddleware((to) => {
+  const userStore = useUserStore()
+  const role = userStore.role
+  console.log('role-auth: Проверка роли:', role, 'для пути:', to.path)
 
-    // ✅ Если вошёл и попал на /api_keys сразу после логина — редирект на /
-    if (token && to.path === '/api_keys' && from.path === '/login') {
-      return navigateTo('/')
-    }
+  if (to.path === '/api-keys' && !['coder', 'admin'].includes(role)) {
+    console.log('role-auth: Доступ к /api-keys запрещен, перенаправление на /chat')
+    return navigateTo('/chat')
+  }
+  if (to.path === '/admin-dashboard' && role !== 'admin') {
+    console.log('role-auth: Доступ к /admin-dashboard запрещен, перенаправление на /chat')
+    return navigateTo('/chat')
   }
 })

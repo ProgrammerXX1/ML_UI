@@ -43,27 +43,27 @@
       <span class="ml-2 text-sm font-semibold animate-flicker">NeuralNet AI</span>
     </NuxtLink>
 
-    <NuxtLink to="/" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+    <NuxtLink to="/chat" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
       <Home class="h-5 w-5" /> Tester
     </NuxtLink>
 
-    <NuxtLink to="/orders" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+    <NuxtLink to="/chat" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
       <ShoppingCart class="h-5 w-5" /> Orders
     </NuxtLink>
 
-    <NuxtLink to="/" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+    <NuxtLink to="/chat" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
       <Package class="h-5 w-5" /> Chats
     </NuxtLink>
 
-    <NuxtLink to="/customers" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+    <NuxtLink to="/chat" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
       <Users2 class="h-5 w-5" /> Customers
     </NuxtLink>
 
-    <NuxtLink to="/api-keys" class="flex items-center gap-4 px-2.5 text-white bg-indigo-700/50 rounded-lg py-2 shadow-glow">
+    <NuxtLink to="/generation" class="flex items-center gap-4 px-2.5 text-white bg-indigo-700/50 rounded-lg py-2 shadow-glow">
       <Key class="h-5 w-5" /> API Keys
     </NuxtLink>
 
-    <NuxtLink to="/settings" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+    <NuxtLink to="/chat" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
       <LineChart class="h-5 w-5" /> Settings
     </NuxtLink>
 
@@ -103,19 +103,19 @@
         <span class="ml-2 text-sm font-semibold animate-flicker">NeuralNet AI</span>
       </NuxtLink>
 
-      <NuxtLink to="/" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+      <NuxtLink to="/chat" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
         <Home class="h-5 w-5" /> Tester
       </NuxtLink>
 
-      <NuxtLink to="/orders" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+      <NuxtLink to="/chat" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
         <ShoppingCart class="h-5 w-5" /> Orders
       </NuxtLink>
 
-      <NuxtLink to="/" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+      <NuxtLink to="/chat" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
         <Package class="h-5 w-5" /> Chats
       </NuxtLink>
 
-      <NuxtLink to="/customers" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+      <NuxtLink to="/generation" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
         <Users2 class="h-5 w-5" /> Customers
       </NuxtLink>
 
@@ -123,7 +123,7 @@
         <Key class="h-5 w-5" /> API Keys
       </NuxtLink>
 
-      <NuxtLink to="/settings" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
+      <NuxtLink to="/chat" class="flex items-center gap-4 px-2.5 text-gray-300 hover:text-white hover:bg-indigo-800/50 rounded-lg py-2 transition-all duration-200 shadow-glow">
         <LineChart class="h-5 w-5" /> Settings
       </NuxtLink>
 
@@ -297,7 +297,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useAsyncData, useRuntimeConfig } from '#app'
+import { useAsyncData, useRuntimeConfig, navigateTo } from '#app'
 import { apiFetch } from '~/utils/api'
 import { CircleUser, Copy, Home, LineChart, MoreHorizontal, Package, PanelLeft, PlusCircle, Search, ShoppingCart, Users2, Key } from 'lucide-vue-next'
 import { Icon } from '@iconify/vue'
@@ -310,7 +310,6 @@ const currentPage = ref(1)
 const itemsPerPage = 4
 const isLoading = ref(false)
 const config = useRuntimeConfig()
-const API_BASE = config.public.NUXT_PUBLIC_API_URL
 
 type KeyStatus = 'Active' | 'Inactive'
 
@@ -345,7 +344,7 @@ async function fetchWithToken<T>(url: string, options: RequestInit = {}): Promis
 const { data: fetchedKeys, refresh } = await useAsyncData('api-keys', async () => {
   try {
     isLoading.value = true
-    const res = await fetchWithToken<any[]>(`${API_BASE}/api/keys/list`)
+    const res = await fetchWithToken<any[]>(`${config.public.apiUrl}/api/keys/list`)
     return res.map(key => ({
       id: Number(key.id),
       key: key.key || 'Unknown',
@@ -390,10 +389,10 @@ function goToPage(page: number) {
 async function generateApiKey() {
   try {
     isLoading.value = true
-    const res = await fetchWithToken<ApiKey>(`${API_BASE}/api/keys/create`, {
+    const res = await fetchWithToken<ApiKey>(`${config.public.apiUrl}/api/keys/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'Active' })
+      body: JSON.stringify({ status: 'Active' }) // лучше убрать, если бекенд не ждёт тело
     })
     await refresh()
   } catch (err) {
@@ -403,12 +402,18 @@ async function generateApiKey() {
     isLoading.value = false
   }
 }
-
+ 
 async function deleteKey(keyId: number) {
   if (!confirm('Удалить API ключ?')) return
+
+  const config = useRuntimeConfig()
+  const apiUrl = config?.public?.apiUrl ?? 'http://localhost:8080'
+
   try {
     isLoading.value = true
-    await fetchWithToken(`${API_BASE}/api/keys/${keyId}`, { method: 'DELETE' })
+    await fetchWithToken(`${apiUrl}/api/keys/${keyId}`, {
+      method: 'DELETE'
+    })
     await refresh()
   } catch (err) {
     console.error('Ошибка при удалении API ключа', err)
@@ -433,7 +438,9 @@ function showUnderDevelopment() {
 }
 
 function logout() {
-  showUnderDevelopment()
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('username')
+    navigateTo('/login')
 }
 
 onMounted(() => {

@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   target: 'server',
 
   devServer: {
-    host: '0.0.0.0:8000',
+    host: 'localhost',
     port: 3000
   },
 
@@ -21,7 +21,8 @@ export default defineNuxtConfig({
     "@nuxt/eslint",
     "shadcn-nuxt",
     "@nuxtjs/tailwindcss",
-    "@nuxtjs/color-mode"
+    "@nuxtjs/color-mode",
+    '@pinia/nuxt'
   ],
 
   colorMode: {

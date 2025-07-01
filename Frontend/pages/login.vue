@@ -166,12 +166,22 @@ button, a, input {
 </style>
 ```
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { navigateTo, useRuntimeConfig, useCookie } from '#app'
+import { useUserStore } from '@/stores/user' // <- поправь путь!
+
 const config = useRuntimeConfig()
 const username = ref('')
 const password = ref('')
+const userStore = useUserStore()        // инициализируем стор
 const cookieToken = useCookie('access_token') // вынесено вне login()
+
+// При монтировании читаем из localStorage (если нужно, иначе стор сам должен читать)
+onMounted(() => {
+  const storedRole = localStorage.getItem('role')
+  if (storedRole) userStore.role = storedRole  // обновляем стор
+})
+
 const login = async () => {
   try {
     const formData = new URLSearchParams()
@@ -181,6 +191,7 @@ const login = async () => {
     formData.append('scope', '')                     // обязательно, даже если пусто
     formData.append('client_id', '')                 // обязательно, даже если пусто
     formData.append('client_secret', '')   
+
     const res = await fetch(`${config.public.apiUrl}/auth/login`, {
       method: 'POST',
       body: formData,
@@ -188,6 +199,7 @@ const login = async () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
+
     const contentType = res.headers.get('content-type') || ''
     if (!res.ok) {
       if (!contentType.includes('application/json')) {
@@ -199,14 +211,20 @@ const login = async () => {
     if (!contentType.includes('application/json')) {
       throw new Error('Некорректный формат ответа сервера')
     }
+
     const data = await res.json()
     const accessToken = data.access_token
     const returnedUsername = data.username
+    const returnedRole = data.role  // ожидаем, что сервер возвращает роль
+
     if (accessToken) {
       localStorage.setItem('access_token', accessToken)
       localStorage.setItem('username', returnedUsername ?? 'Unknown')
+      localStorage.setItem('role', returnedRole ?? 'user')  // сохраняем роль
+      userStore.username = returnedUsername ?? 'Unknown'    // обновляем стор
+      userStore.role = returnedRole ?? 'user'               // обновляем стор
       cookieToken.value = accessToken
-      navigateTo('/')
+      navigateTo('/chat')
     } else {
       alert('Ошибка: токен не получен')
     }
@@ -216,5 +234,3 @@ const login = async () => {
   }
 }
 </script>
-
-

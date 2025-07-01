@@ -11,26 +11,21 @@ from schemas.chat import (
     ChatRequest, ChatResponse, ChatLogItem,
     ChatCreate, ChatOut, ChatUpdate, MessageResponse
 )
-
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-
 router = APIRouter()
-
-
 # ✅ Создание чата
 @router.post("/chat/create", response_model=ChatOut)
 def create_chat(chat: ChatCreate, db: Session = Depends(get_db), user=Depends(get_current_user)):
     new_chat = Chat(
         user_id=user.id,
         title=chat.title or "Новый чат",
-        status=chat.status or "Draft"
+        status=chat.status or "Draft",
     )
     db.add(new_chat)
     db.commit()
     db.refresh(new_chat)
     return new_chat
-
 
 # ✅ Отправка сообщения (в существующий чат)
 @router.post("/chat/{chat_id}/send", response_model=MessageResponse)
@@ -71,7 +66,6 @@ def send_message(chat_id: int, request: ChatRequest, db: Session = Depends(get_d
         chat_id=chat_id
     )
 
-
 # ✅ Получение истории по одному чату
 @router.get("/chat/{chat_id}/history", response_model=List[ChatLogItem])
 def get_chat_history(chat_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
@@ -88,7 +82,6 @@ def get_chat_history(chat_id: int, db: Session = Depends(get_db), user=Depends(g
         chat_id=l.chat_id
     ) for l in logs]
 
-
 # ✅ История всех чатов пользователя
 @router.get("/chat/history", response_model=List[ChatLogItem])
 def get_user_chat_history(db: Session = Depends(get_db), user=Depends(get_current_user)):
@@ -101,13 +94,11 @@ def get_user_chat_history(db: Session = Depends(get_db), user=Depends(get_curren
         chat_id=l.chat_id
     ) for l in logs]
 
-
 # ✅ Список всех чатов пользователя
 @router.get("/chat/list", response_model=List[ChatOut])
 def get_chat_list(db: Session = Depends(get_db), user=Depends(get_current_user)):
     chats = db.query(Chat).filter(Chat.user_id == user.id).order_by(Chat.created_at.desc()).all()
     return chats
-
 
 # ✅ Получение одного чата
 @router.get("/chat/{chat_id}", response_model=ChatOut)
@@ -116,7 +107,6 @@ def get_chat(chat_id: int, db: Session = Depends(get_db), user=Depends(get_curre
     if not chat:
         raise HTTPException(status_code=404, detail="Чат не найден")
     return chat
-
 
 # ✅ Получение всех сообщений чата
 @router.get("/chat/{chat_id}/messages", response_model=List[MessageResponse])
@@ -133,7 +123,6 @@ def get_chat_messages(chat_id: int, db: Session = Depends(get_db), user=Depends(
         chat_id=m.chat_id
     ) for m in chat.messages]
 
-
 # ✅ Редактирование чата
 @router.patch("/chat/{chat_id}", response_model=ChatOut)
 def update_chat(chat_id: int, update: ChatUpdate, db: Session = Depends(get_db), user=Depends(get_current_user)):
@@ -147,7 +136,6 @@ def update_chat(chat_id: int, update: ChatUpdate, db: Session = Depends(get_db),
     db.commit()
     return chat
 
-
 # ✅ Удаление чата
 @router.delete("/chat/{chat_id}", status_code=204)
 def delete_chat(chat_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
@@ -156,7 +144,6 @@ def delete_chat(chat_id: int, db: Session = Depends(get_db), user=Depends(get_cu
         raise HTTPException(status_code=404, detail="Чат не найден")
     db.delete(chat)
     db.commit()
-
 
 # ✅ Сохранение истории сообщений
 @router.post("/chat/{chat_id}/save")

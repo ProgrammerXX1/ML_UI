@@ -10,7 +10,7 @@ class ChatLogItem(BaseModel):
     chat_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ChatRequest(BaseModel):
     message: str = Field(..., max_length=5000)
@@ -30,7 +30,7 @@ class ChatResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class MessageResponse(BaseModel):
     request_text: str
@@ -40,7 +40,7 @@ class MessageResponse(BaseModel):
     chat_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ChatOut(BaseModel):
     id: int
@@ -49,7 +49,7 @@ class ChatOut(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ChatHistoryItem(BaseModel):
     question: str

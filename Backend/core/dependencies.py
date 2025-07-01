@@ -1,11 +1,11 @@
-from fastapi import Depends, HTTPException, status, Header
+from fastapi import Depends, HTTPException, Header, status
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from db.session import SessionLocal
-from db.models import User
+from db.models import User, UserRole
 import os
-from fastapi.security import OAuth2PasswordBearer
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+from enum import Enum
+
 
 SECRET_KEY = os.getenv("SECRET_KEY", "test")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
@@ -17,7 +17,10 @@ def get_db():
     finally:
         db.close()
 
-def get_current_user(authorization: str = Header(...), db: Session = Depends(get_db)):
+async def get_current_user(
+    authorization: str = Header(...),
+    db: Session = Depends(get_db)
+) -> User:
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Invalid token header")
 
@@ -36,8 +39,7 @@ def get_current_user(authorization: str = Header(...), db: Session = Depends(get
 
     return user
 
-def get_api_user(api_key: str = Header(..., alias="X-API-Key"), db: Session = Depends(get_db)) -> User:
-    user = db.query(User).filter(User.api_key == api_key).first()
-    if not user:
-        raise HTTPException(status_code=403, detail="Invalid API key")
-    return user
+class UserRole(str, Enum):
+    admin = "admin"
+    coder = "coder"
+    user = "user"

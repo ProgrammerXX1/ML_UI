@@ -1,8 +1,9 @@
-from fastapi import Depends, HTTPException, Header
+from fastapi import Depends, HTTPException, Header, status
 from sqlalchemy.orm import Session
 from db.session import SessionLocal
-from db.models import User,APIKey
+from db.models import User, APIKey, UserRole
 from starlette.status import HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
+from core.dependencies import get_current_user
 def get_db():
     db = SessionLocal()
     try:
@@ -21,3 +22,13 @@ async def get_api_user(
     if not user:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="User not found")
     return user
+
+def require_roles(*allowed_roles: UserRole):
+    def role_checker(current_user: User = Depends(get_current_user)):
+        if current_user.role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions"
+            )
+        return current_user
+    return role_checker

@@ -18,7 +18,7 @@ services:
       - app-net
 
   backend:
-    build: ./Backend
+    build: ./backend
     container_name: backend
     depends_on:
       - db
@@ -26,7 +26,8 @@ services:
       - DATABASE_URL=postgresql://postgres:2123@db:5432/postgres
       - BACKEND_HOST=0.0.0.0
       - BACKEND_PORT=8000
-      - OLLAMA_BASE_URL=http://10.121.252.227:11434  # 👈 здесь укажи реальный IP
+      - OLLAMA_BASE_URL=http://localhost:11434  # 👈 здесь укажи реальный IP
+      # - OLLAMA_BASE_URL=http://10.121.252.227:11434  # 👈 здесь укажи реальный IP
     ports:
       - "8000:8000"
     networks: 
@@ -35,14 +36,15 @@ services:
       - "host.docker.internal:host-gateway"  # Позволяет контейнеру обращаться к хосту
 
   frontend:
-    build: ./Frontend
+    build: ./frontend
     container_name: frontend
     depends_on:
       - backend
     ports:
       - "80:3000"
     environment:
-      - NUXT_PUBLIC_API_URL=http://10.121.252.227:8000  # 👈 тоже укажи IP сервера
+      - NUXT_PUBLIC_API_URL=http://localhost:8000  
+      # - NUXT_PUBLIC_API_URL=http://10.121.252.227:8000  # 👈 тоже укажи IP сервера
     networks:
       - app-net
 

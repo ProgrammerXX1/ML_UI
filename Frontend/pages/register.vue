@@ -249,7 +249,7 @@ async function register() {
     if (accessToken) {
       localStorage.setItem('access_token', accessToken)
       localStorage.setItem('username', returnedUsername ?? 'Unknown')
-      navigateTo('/') // переход на главную
+      navigateTo('/chat') // переход на главную
     } else {
       alert('Ошибка: токен не получен')
     }

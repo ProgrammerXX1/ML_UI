@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean, Text, ForeignKey, DateT
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .session import Base
+from enum import Enum
 
 class User(Base):
     __tablename__ = "users"
@@ -15,6 +16,8 @@ class User(Base):
 
     chats = relationship("Chat", back_populates="user", cascade="all, delete-orphan")
     chat_logs = relationship("ChatLog", back_populates="user", cascade="all, delete-orphan")
+
+    role = Column(String, default="user")  # Ограничение длины, например, "admin", "coder", "user"
 
 class Chat(Base):
     __tablename__ = "chats"
@@ -54,3 +57,8 @@ class APIKey(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="api_keys")
+
+class UserRole(str, Enum):
+    admin = "admin"
+    coder = "coder"
+    user = "user"

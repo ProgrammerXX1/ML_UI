@@ -3,7 +3,7 @@ from app import auth
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
 import subprocess
-from backend.app.routes import api_keys, chat
+from app.routes import api_keys, chat
 from db.session import engine
 from alembic.config import Config
 from alembic import command
@@ -15,26 +15,32 @@ load_dotenv()
 PORT_SERVER = os.getenv("PORT_SERVER", "http://localhost")
 
 app = FastAPI()
-# # Миграции Alembic
-# def run_migrations():
-#     try:
-#         logging.info("📦 Применение Alembic миграций...")
-#         subprocess.run(["alembic", "upgrade", "head"], check=True)
-#         logging.info("✅ Alembic миграции успешно применены.")
-#     except subprocess.CalledProcessError as e:
-#         logging.error(f"❌ Ошибка Alembic миграции: {e}")
+# Миграции Alembic
+def run_migrations():
+    try:
+        logging.info("📦 Применение Alembic миграций...")
+        subprocess.run(["alembic", "upgrade", "head"], check=True)
+        logging.info("✅ Alembic миграции успешно применены.")
+    except subprocess.CalledProcessError as e:
+        logging.error(f"❌ Ошибка Alembic миграции: {e}")
 
-# # Вызов миграций до запуска приложения
-# run_migrations()
+# Вызов миграций до запуска приложения
+run_migrations()
 
 # CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-            PORT_SERVER,
-            f"{PORT_SERVER}:3000",
-            f"{PORT_SERVER}:8000"
-    ],
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080"
+],
+    # allow_origins=[
+    #         PORT_SERVER,
+    #         "localhost:3000",
+    #         f"{PORT_SERVER}:8080"
+    # ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,7 +49,7 @@ app.add_middleware(
 # Роуты
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(chat.router, tags=["Chat"])
-app.include_router(chat.router, tags=["API Keys"])
+app.include_router(api_keys.router, tags=["API Keys"])
 # OpenAPI с BearerAuth
 def custom_openapi():
     if app.openapi_schema:
@@ -74,6 +80,8 @@ app.openapi = custom_openapi
 if __name__ == "__main__":
     import uvicorn
     import os
-    host = os.getenv("BACKEND_HOST", "0.0.0.0")
-    port = int(os.getenv("BACKEND_PORT", 8000))
+    from dotenv import load_dotenv
+    load_dotenv()  # Загрузка .env
+    host = os.getenv("BACKEND_HOST", "localhost")
+    port = int(os.getenv("BACKEND_PORT", 8080))
     uvicorn.run("main:app", host=host, port=port, reload=False)

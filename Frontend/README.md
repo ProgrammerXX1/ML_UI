@@ -1,3 +1,6 @@
+// "build": "nuxt build --host 0.0.0.0:8000",
+// "dev": "nuxt dev --host 0.0.0.0:8000",
+// "start": "nuxt start --host 0.0.0.0:8000",
 # Nuxt 3 Minimal Starter
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
@@ -22,7 +25,7 @@ bun install
 
 ## Development Server
 
-Start the development server on `http://87.255.209.201:3000`:
+Start the development server 
 
 ```bash
 # npm
