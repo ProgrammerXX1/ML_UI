@@ -1,17 +1,30 @@
-import { defineNuxtRouteMiddleware } from '#app'
-import { useUserStore } from '@/stores/user'
+import { apiFetch } from '~/utils/api'
+import { navigateTo } from '#app'
 
-export default defineNuxtRouteMiddleware((to) => {
-  const userStore = useUserStore()
-  const role = userStore.role
-  console.log('role-auth: Проверка роли:', role, 'для пути:', to.path)
+export default defineNuxtRouteMiddleware(async (to, from) => {
+  // Если выполняемся на сервере — ничего не делаем
+  if (process.server) return
 
-  if (to.path === '/api-keys' && !['coder', 'admin'].includes(role)) {
-    console.log('role-auth: Доступ к /api-keys запрещен, перенаправление на /chat')
-    return navigateTo('/chat')
+  const token = localStorage.getItem('access_token')
+  if (!token) {
+    console.error('auth middleware: токен отсутствует')
+    return navigateTo('/login')
   }
-  if (to.path === '/admin-dashboard' && role !== 'admin') {
-    console.log('role-auth: Доступ к /admin-dashboard запрещен, перенаправление на /chat')
-    return navigateTo('/chat')
+
+  try {
+    // Проверяем, что токен валиден
+    await apiFetch('/jwt-protected', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    // Дополнительно для всех /chat* проверяем доступ
+    if (to.path.startsWith('/chat')) {
+      await apiFetch('/chat', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+    }
+  } catch (err) {
+    console.error('auth middleware: ошибка проверки токена', err)
+    return navigateTo('/login')
   }
 })

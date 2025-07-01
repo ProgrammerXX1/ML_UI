@@ -16,6 +16,8 @@ module.exports = {
     },
     extend: {
       colors: {
+      card: 'hsl(var(--card) / <alpha-value>)',
+      'card-foreground': 'hsl(var(--card-foreground) / <alpha-value>)',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

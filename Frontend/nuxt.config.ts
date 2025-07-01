@@ -26,6 +26,8 @@ export default defineNuxtConfig({
   ],
 
   colorMode: {
+    fallback: 'dark', // если нет поддержки, то тёмная тема
+    preference: 'dark', // по умолчанию тёмная тема
     classSuffix: ''
   },
 

@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Базовые стили */
 body {
   margin: 0;
@@ -203,7 +207,7 @@ button, a, input, select {
 }
 
 .text-gray-200 {
-  color: #e5e7eb;
+  color: #d1d5db;
 }
 
 .bg-gray-800\/20 {
@@ -245,7 +249,24 @@ button, a, input, select {
   -webkit-background-clip: text;
 }
 
-/* Стили для светлой темы */
+:root {
+  --card: rgba(24, 24, 27, 0.4); /* пример: темно-серый с прозрачностью */
+  --card-foreground: #ffffff;
+}
+
+.dark {
+  --card: rgba(24, 24, 27, 0.4);            /* тёмная тема */
+  --card-foreground: #ffffff;
+}
+
+/* :root {
+  --card: rgba(255, 255, 255, 0.9);         
+  --card-foreground: #000000;
+} 
+
+
+
+ Стили для светлой темы
 [data-theme="light"] {
   background: linear-gradient(to bottom right, #e0e7ff, #c7d2fe, #a5b4fc);
   color: #1f2937;
@@ -293,4 +314,4 @@ button, a, input, select {
 
 [data-theme="light"] .bg-gradient-to-r:hover {
   background: linear-gradient(to right, #3b82f6, #9333ea);
-}
+} */

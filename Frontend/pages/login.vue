@@ -1,140 +1,93 @@
-```vue
+
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br text-white relative overflow-hidden">
-    <div class="w-full max-w-md bg-gray-900/30 rounded-xl shadow-2xl p-8 border border-indigo-700/50 backdrop-blur-lg relative animate-fade-in" :class="{ 'form-processing': loading }">
-      <!-- Логотип и заголовок -->
-      <div class="flex justify-center mb-6">
-        <div class="flex items-center gap-2">
-          <svg class="h-12 w-12 animate-neural-network" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <g class="nodes">
-              <circle cx="50" cy="50" r="12" fill="none" stroke="#a5b4fc" stroke-width="3" class="node node-center" />
-              <circle cx="30" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-top-left" />
-              <circle cx="70" cy="30" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-top-right" />
-              <circle cx="30" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-left" />
-              <circle cx="70" cy="70" r="8" fill="none" stroke="#c084fc" stroke-width="2" class="node node-bottom-right" />
-            </g>
-            <g class="connections">
-              <path d="M50 50 L30 30" stroke="#60a5fa" stroke-width="1.5" class="connection" />
-              <path d="M50 50 L70 30" stroke="#60a5fa" stroke-width="1.5" class="connection" />
-              <path d="M50 50 L30 70" stroke="#60a5fa" stroke-width="1.5" class="connection" />
-              <path d="M50 50 L70 70" stroke="#60a5fa" stroke-width="1.5" class="connection" />
-            </g>
-          </svg>
-          <h2 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-flicker">NeuralNet AI</h2>
-        </div>
-      </div>
-      <!-- Анимация загрузки -->
-      <div v-if="loading" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div class="processing-ring"></div>
-      </div>
-      <!-- Форма входа -->
-      <form @submit.prevent="login" class="space-y-4">
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-300 animate-glow-text">Имя пользователя</label>
-          <input
-            v-model="username"
-            type="text"
-            placeholder="your_username"
-            required
-            class="w-full px-4 py-2 rounded-md bg-gray-800/20 text-white border border-indigo-700/50 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-gray-700/20 hover:scale-[1.02] shadow-glow"
-            :disabled="loading"
-          />
-        </div>
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-300 animate-glow-text">Пароль</label>
-          <input
-            v-model="password"
-            type="password"
-            placeholder="••••••••"
-            required
-            class="w-full px-4 py-2 rounded-md bg-gray-800/20 text-white border border-indigo-700/50 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-gray-700/20 hover:scale-[1.02] shadow-glow"
-            :disabled="loading"
-          />
-        </div>
-        <p v-if="errorMessage" class="text-sm text-red-400 text-center animate-pulse">{{ errorMessage }}</p>
-        <button
-          type="submit"
-          :disabled="loading"
-          class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold py-2 rounded-md disabled:opacity-50 shadow-lg hover:shadow-xl hover:scale-[1.05] transition-all duration-300"
-        >
-          {{ loading ? 'Вход...' : '🔐 Войти' }}
-        </button>
-        <p class="text-center text-sm text-gray-400 mt-4">
-          Ещё нет аккаунта?
-          <NuxtLink to="/register" class="text-blue-400 hover:text-purple-400 hover:underline animate-flicker transition-all duration-300">Зарегистрироваться</NuxtLink>
-        </p>
-      </form>
+  <div class="flex min-h-screen w-full flex-col bg-gradient-to-br from-gray-950 via-indigo-950 to-purple-950 text-white relative overflow-hidden">
+    <NeuralMesh />
+    <div class="flex flex-1 items-center justify-center p-4">
+      <Card class="w-full max-w-md bg-gray-900/30 border border-indigo-700/50 shadow-xl rounded-xl backdrop-blur-lg">
+        <CardHeader>
+          <CardTitle class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-flicker">Login to NeuralNet AI</CardTitle>
+          <CardDescription class="text-gray-300 animate-glow-text">Enter your credentials to access your account.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div class="grid gap-4">
+            <div class="grid gap-2">
+              <label for="username" class="text-gray-300 animate-glow-text">Username</label>
+              <Input
+                id="username"
+                v-model="username"
+                placeholder="Enter your username"
+                class="bg-gray-800/20 text-white border-indigo-700/50 focus:border-purple-500 transition-all duration-300 shadow-glow"
+              />
+            </div>
+            <div class="grid gap-2">
+              <label for="password" class="text-gray-300 animate-glow-text">Password</label>
+              <Input
+                id="password"
+                v-model="password"
+                type="password"
+                placeholder="Enter your password"
+                class="bg-gray-800/20 text-white border-indigo-700/50 focus:border-purple-500 transition-all duration-300 shadow-glow"
+              />
+            </div>
+            <Button
+              :disabled="isLoading"
+              class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white transition-all duration-300 shadow-glow"
+              @click="login"
+            >
+              <span v-if="isLoading" class="animate-pulse">Logging in...</span>
+              <span v-else>Login</span>
+            </Button>
+            <div class="text-center text-sm text-gray-300">
+              Don't have an account? <NuxtLink to="/register" class="text-blue-400 hover:text-blue-300 transition-colors">Register</NuxtLink>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { navigateTo, useRuntimeConfig, useCookie } from '#app'
-import { useUserStore } from '@/stores/user' // <- поправь путь!
+import { ref } from 'vue'
+import { navigateTo } from '#app'
+import { useUserStore } from '@/stores/user'
+import { apiFetch } from '~/utils/api'
 
-const config = useRuntimeConfig()
+const userStore = useUserStore()
 const username = ref('')
 const password = ref('')
-const userStore = useUserStore()        // инициализируем стор
-const cookieToken = useCookie('access_token') // вынесено вне login()
+const isLoading = ref(false)
 
-// При монтировании читаем из localStorage (если нужно, иначе стор сам должен читать)
-onMounted(() => {
-  const storedRole = localStorage.getItem('role')
-  if (storedRole) userStore.role = storedRole  // обновляем стор
-})
+async function login() {
+  if (!username.value || !password.value) {
+    alert('Пожалуйста, заполните все поля')
+    return
+  }
 
-const login = async () => {
+  isLoading.value = true
   try {
-    const formData = new URLSearchParams()
-    formData.append('username', username.value)
-    formData.append('password', password.value)
-    formData.append('grant_type', 'password')        // обязательно!
-    formData.append('scope', '')                     // обязательно, даже если пусто
-    formData.append('client_id', '')                 // обязательно, даже если пусто
-    formData.append('client_secret', '')   
+    const params = new URLSearchParams()
+    params.append('username', username.value)
+    params.append('password', password.value)
 
-    const res = await fetch(`${config.public.apiUrl}/auth/login`, {
+    const response = await apiFetch('/auth/login', {
       method: 'POST',
-      body: formData,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
-      }
+      },
+      body: params
     })
 
-    const contentType = res.headers.get('content-type') || ''
-    if (!res.ok) {
-      if (!contentType.includes('application/json')) {
-        throw new Error('Сервер вернул не JSON (возможно 404 или 500)')
-      }
-      const err = await res.json()
-      throw new Error(err.detail || `Ошибка входа: ${res.status}`)
-    }
-    if (!contentType.includes('application/json')) {
-      throw new Error('Некорректный формат ответа сервера')
-    }
-
-    const data = await res.json()
-    const accessToken = data.access_token
-    const returnedUsername = data.username
-    const returnedRole = data.role  // ожидаем, что сервер возвращает роль
-
-    if (accessToken) {
-      localStorage.setItem('access_token', accessToken)
-      localStorage.setItem('username', returnedUsername ?? 'Unknown')
-      localStorage.setItem('role', returnedRole ?? 'user')  // сохраняем роль
-      userStore.username = returnedUsername ?? 'Unknown'    // обновляем стор
-      userStore.role = returnedRole ?? 'user'               // обновляем стор
-      cookieToken.value = accessToken
-      navigateTo('/chat')
-    } else {
-      alert('Ошибка: токен не получен')
-    }
-  } catch (err: any) {
-    console.error('❌ Ошибка входа:', err)
-    alert(err.message || 'Неверные данные для входа')
+    localStorage.setItem('access_token', response.access_token)
+    await userStore.fetchUserData()
+    navigateTo('/chat')
+  } catch (err) {
+    console.error('login: Ошибка авторизации:', err)
+    alert('Ошибка авторизации')
+  } finally {
+    isLoading.value = false
   }
 }
+
+
 </script>
-```

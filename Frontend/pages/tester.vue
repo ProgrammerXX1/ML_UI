@@ -5,19 +5,19 @@
     <NeuralVortex />
     <Sidebar />
     <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-64">
-      <Header page-title="Dashboard">
-  <template #mobileMenu>
-    <Sidebar />
-  </template>
-</Header>
+      <Header page-title="Tester">
+        <template #mobileMenu>
+          <Sidebar />
+        </template>
+      </Header>
       <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 md:gap-8">
         <Card class="bg-gray-900/30 border border-indigo-700/50 text-white shadow-xl rounded-xl backdrop-blur-lg">
           <CardHeader>
-            <CardTitle class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-flicker">Dashboard</CardTitle>
-            <CardDescription class="text-gray-300 animate-glow-text">Welcome to NeuralNet AI.</CardDescription>
+            <CardTitle class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-flicker">Tester</CardTitle>
+            <CardDescription class="text-gray-300 animate-glow-text">Testing tools for NeuralNet AI.</CardDescription>
           </CardHeader>
           <CardContent>
-            <p class="text-gray-300">Добро пожаловать в панель управления!</p>
+            <p class="text-gray-300">В разработке...</p>
           </CardContent>
         </Card>
       </main>
@@ -41,4 +41,3 @@ onMounted(async () => {
 
 definePageMeta({ middleware: ['auth', 'role-auth'] })
 </script>
-```

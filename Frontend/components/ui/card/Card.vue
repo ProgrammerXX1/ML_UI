@@ -11,7 +11,7 @@ const props = defineProps<{
   <div
     :class="
       cn(
-        'rounded-lg border bg-card text-card-foreground shadow-sm',
+        'rounded-lg border border-white/10 bg-gray-900/30 text-white backdrop-blur shadow-sm',
         props.class,
       )
     "
