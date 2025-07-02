@@ -35,9 +35,9 @@ class ChatResponse(BaseModel):
 class MessageResponse(BaseModel):
     request_text: str
     response_text: str
-    timestamp: datetime
     latency_ms: int
-    chat_id: int
+    timestamp: Optional[datetime] = None
+    chat_id: Optional[int] = None
 
     class Config:
         from_attributes = True

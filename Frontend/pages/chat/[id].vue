@@ -81,6 +81,7 @@ const chatId = Number(route.params.id)
 const chat = ref<Chat | null>(null)
 const messages = ref<Message[]>([])
 const newMessage = ref('')
+const tempMessage = ref('')
 const isLoading = ref(true)
 const sending = ref(false)
 const isTyping = ref(false)
@@ -92,7 +93,7 @@ const allMessages = computed(() => {
     return [
       ...messages.value,
       {
-        request_text: newMessage.value,
+        request_text: tempMessage.value,
         response_text: typedResponse.value,
         timestamp: new Date().toISOString(),
         latency_ms: 0,
@@ -156,8 +157,7 @@ async function sendMessage() {
   sending.value = true
   isTyping.value = true
   typedResponse.value = ''
-
-  const currentRequest = input
+  tempMessage.value = input
   newMessage.value = ''
   scrollToBottom()
 
@@ -165,7 +165,7 @@ async function sendMessage() {
     const res = await fetchWithToken<Message>(`/chat/${chatId}/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: currentRequest })
+      body: JSON.stringify({ message: input })
     })
 
     const fullText = res.response_text || ''
@@ -179,11 +179,10 @@ async function sendMessage() {
       } else {
         clearInterval(interval)
 
-        messages.value.push({
-          ...res
-        })
+        messages.value.push({ ...res })
 
         typedResponse.value = ''
+        tempMessage.value = ''
         isTyping.value = false
         scrollToBottom()
       }
@@ -192,6 +191,7 @@ async function sendMessage() {
     console.error('❌ Ошибка отправки:', err)
     alert('Ошибка при отправке сообщения')
     isTyping.value = false
+    tempMessage.value = ''
   } finally {
     sending.value = false
   }
