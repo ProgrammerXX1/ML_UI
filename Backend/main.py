@@ -9,7 +9,7 @@ from alembic.config import Config
 from alembic import command
 import os
 import logging
-
+import uvicorn
 from dotenv import load_dotenv
 load_dotenv()
 PORT_SERVER = os.getenv("PORT_SERVER", "http://localhost")
@@ -86,10 +86,7 @@ app.openapi = custom_openapi
 
 # Запуск в Docker
 if __name__ == "__main__":
-    import uvicorn
-    import os
-    from dotenv import load_dotenv
     load_dotenv()  # Загрузка .env
-    host = os.getenv("BACKEND_HOST", "localhost")
+    host = os.getenv("BACKEND_HOST", "0.0.0.0")
     port = int(os.getenv("BACKEND_PORT", 8000))
     uvicorn.run("app.main:app", host=host, port=port, reload=False)

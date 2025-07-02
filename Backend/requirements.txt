@@ -9,3 +9,4 @@ alembic
 requests
 pydantic
 python-multipart
+psutil
