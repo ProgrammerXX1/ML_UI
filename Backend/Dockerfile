@@ -11,8 +11,7 @@ COPY requirements.txt .
 
 # Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install torch==2.3.0+cu121 --index-url
-https://download.pytorch.org/whl/cu121
+RUN pip install torch==2.3.0+cu121 --index-url https://download.pytorch.org/whl/cu121
 
 # Копируем весь код бэкенда (внутри /backend, т.е. из текущей директории)
 COPY . .
