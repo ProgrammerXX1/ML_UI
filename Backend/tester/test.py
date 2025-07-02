@@ -1,7 +1,15 @@
 import pytest
 import requests
 
-BASE_URL = "http://localhost:8080"
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+host = os.getenv("BACKEND_HOST", "localhost")
+port = os.getenv("BACKEND_PORT", "8000")
+BASE_URL = f"http://{host}:{port}"
+
 
 @pytest.fixture
 def token():

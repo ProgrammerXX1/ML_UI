@@ -1,7 +1,12 @@
 import requests
+from dotenv import load_dotenv
+import os
 
-# Адрес API
-BASE_URL = "http://localhost:8080"
+load_dotenv()
+
+host = os.getenv("BACKEND_HOST", "localhost")
+port = os.getenv("BACKEND_PORT", "8000")
+BASE_URL = f"http://{host}:{port}"
 
 # Логин — получение JWT токена
 def login(username: str, password: str):
