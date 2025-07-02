@@ -11,5 +11,5 @@ pydantic
 python-multipart
 psutil
 torch==2.3.0+cu121
---extra-index-url 
+--extra-index-url
 https://download.pytorch.org/whl/cu121
