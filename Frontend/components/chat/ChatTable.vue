@@ -150,6 +150,7 @@ const props = defineProps<{
   isLoading: boolean
 }>()
 const menuOpen = ref(false)
+
 const emit = defineEmits<{
   (e: 'chatClick', id: number): void
   (e: 'editChat', chat: Chat): void

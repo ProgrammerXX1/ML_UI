@@ -1,4 +1,3 @@
-```vue
 <template>
   <div class="flex min-h-screen w-full flex-col bg-gradient-to-br from-gray-950 via-indigo-950 to-purple-950 text-white relative overflow-hidden">
     <NeuralMesh />
@@ -13,284 +12,216 @@
         </template>
       </Header>
       <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 md:gap-8">
-        <!-- Карточки с общими метриками -->
+
+        <!-- Метрики -->
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card class="bg-gray-900/30 border border-indigo-700/50 shadow-xl rounded-xl backdrop-blur-lg">
             <CardHeader class="flex flex-row items-center justify-between">
-              <CardTitle class="text-lg font-bold text-white">
-                Активные пользователи
-              </CardTitle>
+              <CardTitle class="text-lg font-bold text-white">Активные пользователи</CardTitle>
               <Users class="w-6 h-6 text-blue-400" />
             </CardHeader>
             <CardContent>
-              <p class="text-2xl font-bold text-gray-200">42</p>
-              <p class="text-sm text-gray-400">За последние 24 часа</p>
+              <p class="text-2xl font-bold text-gray-200">{{ dashboard.users }}</p>
+              <p class="text-sm text-gray-400">Всего зарегистрировано</p>
             </CardContent>
           </Card>
+
           <Card class="bg-gray-900/30 border border-indigo-700/50 shadow-xl rounded-xl backdrop-blur-lg">
             <CardHeader class="flex flex-row items-center justify-between">
-              <CardTitle class="text-lg font-bold text-white">
-                API запросы
-              </CardTitle>
+              <CardTitle class="text-lg font-bold text-white">API запросы</CardTitle>
               <Code class="w-6 h-6 text-purple-400" />
             </CardHeader>
             <CardContent>
-              <p class="text-2xl font-bold text-gray-200">127</p>
-              <p class="text-sm text-gray-400">За последние 24 часа</p>
+              <p class="text-2xl font-bold text-gray-200">{{ dashboard.logs }}</p>
+              <p class="text-sm text-gray-400">Всего логов</p>
             </CardContent>
           </Card>
+
           <Card class="bg-gray-900/30 border border-indigo-700/50 shadow-xl rounded-xl backdrop-blur-lg">
             <CardHeader class="flex flex-row items-center justify-between">
-              <CardTitle class="text-lg font-bold text-white">
-                Использовано токенов
-              </CardTitle>
+              <CardTitle class="text-lg font-bold text-white">Средняя задержка</CardTitle>
               <DollarSign class="w-6 h-6 text-green-400" />
             </CardHeader>
             <CardContent>
-              <p class="text-2xl font-bold text-gray-200">15,320</p>
-              <p class="text-sm text-gray-400">За текущий месяц</p>
+              <p class="text-2xl font-bold text-gray-200">{{ dashboard.avg_latency }} мс</p>
+              <p class="text-sm text-gray-400">Среднее время ответа</p>
             </CardContent>
           </Card>
+
           <Card class="bg-gray-900/30 border border-indigo-700/50 shadow-xl rounded-xl backdrop-blur-lg">
             <CardHeader class="flex flex-row items-center justify-between">
-              <CardTitle class="text-lg font-bold text-white">
-                GPU Usage
-              </CardTitle>
+              <CardTitle class="text-lg font-bold text-white">CPU Usage</CardTitle>
               <Cpu class="w-6 h-6 text-red-400" />
             </CardHeader>
             <CardContent>
-              <p class="text-2xl font-bold text-gray-200">78%</p>
-              <p class="text-sm text-gray-400">Текущее использование</p>
+              <p class="text-2xl font-bold text-gray-200">{{ dashboard.system.cpu_percent }}%</p>
+              <p class="text-sm text-gray-400">Текущая загрузка CPU</p>
             </CardContent>
           </Card>
         </div>
 
-        <!-- Таблица активности пользователей -->
-        <Card class="bg-gray-900/30 border border-indigo-700/50 shadow-xl rounded-xl backdrop-blur-lg">
-          <CardHeader>
-            <CardTitle class="text-2xl font-bold text-white">
-              Активность пользователей
-            </CardTitle>
-            <CardDescription class="text-gray-300">
-              Запросы обычных пользователей
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Имя</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Запросы</TableHead>
-                  <TableHead>Последнее действие</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow v-for="user in users" :key="user.id">
-                  <TableCell>{{ user.id }}</TableCell>
-                  <TableCell>{{ user.name }}</TableCell>
-                  <TableCell>{{ user.email }}</TableCell>
-                  <TableCell>{{ user.requests }}</TableCell>
-                  <TableCell>{{ new Date(user.lastAction).toLocaleString() }}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <!-- GPU -->
+<CardContent>
+  <div v-if="dashboard.system.gpus.length > 0">
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>#</TableHead>
+          <TableHead>Модель</TableHead>
+          <TableHead>Объем памяти (GB)</TableHead>
+          <TableHead>Выделено (GB)</TableHead>
+          <TableHead>Резерв (GB)</TableHead>
+          <TableHead>Загрузка (%)</TableHead>
+          <TableHead>Температура (°C)</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="(gpu, index) in dashboard.system.gpus" :key="index">
+          <TableCell>{{ index + 1 }}</TableCell>
+          <TableCell>{{ gpu.name }}</TableCell>
+          <TableCell>{{ gpu.memory_total }}</TableCell>
+          <TableCell>{{ gpu.memory_allocated }}</TableCell>
+          <TableCell>{{ gpu.memory_reserved }}</TableCell>
+          <TableCell>{{ gpu.utilization }}%</TableCell>
+          <TableCell>{{ gpu.temperature }}°C</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  </div>
+  <p v-else class="text-sm text-gray-400">Нет доступных GPU</p>
+</CardContent>
 
-        <!-- Таблица API-запросов -->
-        <Card class="bg-gray-900/30 border border-indigo-700/50 shadow-xl rounded-xl backdrop-blur-lg">
-          <CardHeader>
-            <CardTitle class="text-2xl font-bold text-white">
-              API запросы
-            </CardTitle>
-            <CardDescription class="text-gray-300">
-              Запросы кодеров через API
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID ключа</TableHead>
-                  <TableHead>Пользователь</TableHead>
-                  <TableHead>Токены</TableHead>
-                  <TableHead>Эндпоинт</TableHead>
-                  <TableHead>Статус</TableHead>
-                  <TableHead>Время</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow v-for="apiRequest in apiRequests" :key="apiRequest.id">
-                  <TableCell>{{ apiRequest.keyId }}</TableCell>
-                  <TableCell>{{ apiRequest.user }}</TableCell>
-                  <TableCell>{{ apiRequest.tokens }}</TableCell>
-                  <TableCell>{{ apiRequest.endpoint }}</TableCell>
-                  <TableCell :class="[apiRequest.status === 'Success' ? 'text-green-400' : 'text-red-400']">
-                    {{ apiRequest.status }}
-                  </TableCell>
-                  <TableCell>{{ new Date(apiRequest.time).toLocaleString() }}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
 
-        <!-- Графики использования ресурсов -->
-        <Card class="bg-gray-900/30 border border-indigo-700/50 shadow-xl rounded-xl backdrop-blur-lg">
-          <CardHeader>
-            <CardTitle class="text-2xl font-bold text-white">
-              Использование ресурсов
-            </CardTitle>
-            <CardDescription class="text-gray-300">
-              Токены и GPU за последние 7 дней
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div class="grid gap-4 md:grid-cols-2">
-              <!-- График токенов -->
-              <div>
-                <h3 class="text-lg font-semibold text-gray-200 mb-2">Использование токенов</h3>
-                <canvas ref="tokensChart" class="w-full h-64"></canvas>
-              </div>
-              <!-- График GPU -->
-              <div>
-                <h3 class="text-lg font-semibold text-gray-200 mb-2">Использование GPU (%)</h3>
-                <canvas ref="gpuChart" class="w-full h-64"></canvas>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <!-- RAM и последний чат -->
+        <div class="grid gap-4 md:grid-cols-2">
+          <Card class="bg-gray-900/30 border border-indigo-700/50 shadow-xl rounded-xl backdrop-blur-lg">
+            <CardHeader class="flex flex-row items-center justify-between">
+              <CardTitle class="text-lg font-bold text-white">RAM Usage</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p class="text-2xl font-bold text-gray-200">
+                {{ dashboard.system.ram_used }} / {{ dashboard.system.ram_total }} GB
+              </p>
+              <p class="text-sm text-gray-400">Использовано памяти</p>
+            </CardContent>
+          </Card>
+
+          <Card class="bg-gray-900/30 border border-indigo-700/50 shadow-xl rounded-xl backdrop-blur-lg">
+            <CardHeader class="flex flex-row items-center justify-between">
+              <CardTitle class="text-lg font-bold text-white">Последний чат</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p class="text-lg text-gray-200">{{ dashboard.latest_chat_title }}</p>
+              <p class="text-sm text-gray-400">Название последнего активного чата</p>
+            </CardContent>
+          </Card>
+        </div>
+
       </main>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
-import Chart from 'chart.js/auto'
 import { Users, Code, DollarSign, Cpu } from 'lucide-vue-next'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table'
-
-// Компоненты
 import Header from '@/components/layout/Header.vue'
 import Sidebar from '@/components/layout/Sidebar.vue'
 import NeuralMesh from '@/components/layout/NeuralMesh.vue'
+import { apiFetch } from '@/utils/api'
 
 const userStore = useUserStore()
 
-// Статичные данные для пользователей
-const users = ref([
-  { id: 1, name: 'Иван Иванов', email: 'ivan@example.com', requests: 45, lastAction: '2025-07-01T10:00:00Z' },
-  { id: 2, name: 'Мария Петрова', email: 'maria@example.com', requests: 32, lastAction: '2025-07-01T09:30:00Z' },
-  { id: 3, name: 'Алексей Сидоров', email: 'alexey@example.com', requests: 67, lastAction: '2025-06-30T15:45:00Z' },
-])
+// Проверка токена
+function authCheck(): string {
+  const token = localStorage.getItem('access_token')
+  if (!token) throw new Error('NO_TOKEN')
+  return token
+}
 
-// Статичные данные для API-запросов
-const apiRequests = ref([
-  { id: 1, keyId: 'API123', user: 'coder1@example.com', tokens: 500, endpoint: '/api/generate', status: 'Success', time: '2025-07-01T08:00:00Z' },
-  { id: 2, keyId: 'API456', user: 'coder2@example.com', tokens: 750, endpoint: '/api/analyze', status: 'Failed', time: '2025-07-01T07:30:00Z' },
-  { id: 3, keyId: 'API789', user: 'coder3@example.com', tokens: 300, endpoint: '/api/predict', status: 'Success', time: '2025-06-30T22:15:00Z' },
-])
+// Запрос с токеном
+async function fetchWithToken<T>(url: string, options: RequestInit = {}): Promise<T> {
+  const token = authCheck()
+  return await apiFetch(url, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...(options.headers || {})
+    }
+  })
+}
 
-// Ссылки на canvas для графиков
-const tokensChart = ref<HTMLCanvasElement | null>(null)
-const gpuChart = ref<HTMLCanvasElement | null>(null)
+// Типизация
+interface GPUStat {
+  name: string
+  memory_total: number
+  memory_allocated: number
+  memory_reserved: number
+  utilization: number       // %
+  temperature: number       // °C
+}
 
-// Статичные данные для графиков
-const chartData = {
-  labels: ['2025-06-25', '2025-06-26', '2025-06-27', '2025-06-28', '2025-06-29', '2025-06-30', '2025-07-01'],
-  tokens: [1200, 1500, 1800, 1300, 2000, 1700, 15320],
-  gpu: [65, 70, 68, 75, 80, 72, 78],
+interface DashboardData {
+  users: number
+  chats: number
+  logs: number
+  api_keys: number
+  avg_latency: number
+  latest_chat_title: string
+  system: {
+    cpu_percent: number
+    ram_total: number
+    ram_used: number
+    gpus: GPUStat[]
+  }
+}
+
+
+// Данные дашборда
+const dashboard = ref<DashboardData>({
+  users: 0,
+  chats: 0,
+  logs: 0,
+  api_keys: 0,
+  avg_latency: 0,
+  latest_chat_title: '',
+  system: {
+    cpu_percent: 0,
+    ram_total: 0,
+    ram_used: 0,
+    gpus: []
+  }
+})
+
+// Загрузка дашборда
+async function fetchDashboard() {
+  try {
+    const res = await fetchWithToken<DashboardData>('/admin/dashboard')
+    if (res && typeof res === 'object') {
+      dashboard.value = res
+    } else {
+      console.warn('⚠️ Неверный ответ от сервера:', res)
+    }
+  } catch (e) {
+    console.error('❌ Ошибка загрузки dashboard:', e)
+  }
 }
 
 onMounted(async () => {
   userStore.init()
   if (process.client) {
     userStore.loadFromLocalStorage()
+
     if (localStorage.getItem('access_token')) {
       await userStore.fetchUserData()
     }
 
-    // Инициализация графика токенов
-    if (tokensChart.value) {
-      new Chart(tokensChart.value, {
-        type: 'line',
-        data: {
-          labels: chartData.labels,
-          datasets: [{
-            label: 'Токены',
-            data: chartData.tokens,
-            borderColor: 'rgba(59, 130, 246, 0.8)',
-            backgroundColor: 'rgba(59, 130, 246, 0.2)',
-            tension: 0.4,
-            fill: true,
-          }],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-              title: { display: true, text: 'Токены', color: '#d1d5db' },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' },
-              ticks: { color: '#d1d5db' },
-            },
-            x: {
-              title: { display: true, text: 'Дата', color: '#d1d5db' },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' },
-              ticks: { color: '#d1d5db' },
-            },
-          },
-          plugins: {
-            legend: { labels: { color: '#d1d5db' } },
-          },
-        },
-      })
-    }
-
-    // Инициализация графика GPU
-    if (gpuChart.value) {
-      new Chart(gpuChart.value, {
-        type: 'line',
-        data: {
-          labels: chartData.labels,
-          datasets: [{
-            label: 'GPU Usage (%)',
-            data: chartData.gpu,
-            borderColor: 'rgba(239, 68, 68, 0.8)',
-            backgroundColor: 'rgba(239, 68, 68, 0.2)',
-            tension: 0.4,
-            fill: true,
-          }],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-              title: { display: true, text: 'GPU Usage (%)', color: '#d1d5db' },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' },
-              ticks: { color: '#d1d5db' },
-            },
-            x: {
-              title: { display: true, text: 'Дата', color: '#d1d5db' },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' },
-              ticks: { color: '#d1d5db' },
-            },
-          },
-          plugins: {
-            legend: { labels: { color: '#d1d5db' } },
-          },
-        },
-      })
-    }
+    await fetchDashboard()
+    setInterval(fetchDashboard, 6000)
   }
 })
 
 definePageMeta({ middleware: ['auth', 'role-auth'] })
 </script>
-```

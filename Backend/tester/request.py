@@ -14,6 +14,12 @@ def access_protected(token: str):
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.get(f"{BASE_URL}/jwt-protected", headers=headers)
     response.raise_for_status()
+    url = f"{BASE_URL}/jwt-protected"
+    print(f"📡 Запрос к: {url}")
+    print(f"📥 Status: {response.status_code}")
+    print(f"📦 Ответ: {response.text}")
+    print(f"🔐 Headers: {headers}")
+
     return response.json()
 
 # Запрос с API ключом

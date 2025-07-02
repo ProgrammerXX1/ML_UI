@@ -1,13 +1,18 @@
 # routes/api_keys.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from db.models import APIKey
-from core.dependencies import get_db, get_current_user
-from schemas.api_keys import APIKeyOut
+from sqlalchemy import func
+import psutil
+import torch
 import secrets
+
+from core.dependencies import get_db, get_current_user
 from core.API_dependencies import get_api_user, require_roles
+from db.models import User, Chat, ChatLog, APIKey, UserRole
+from schemas.api_keys import APIKeyOut
 from typing import List
-from db.models import User, UserRole
+import pynvml
+pynvml.nvmlInit()
 
 router = APIRouter()
 
@@ -34,6 +39,7 @@ def delete_api_key(id: int, db: Session = Depends(get_db), user=Depends(get_curr
 
 @router.get("/jwt-protected")
 async def jwt_protected_route(current_user: User = Depends(get_current_user)):
+    print(f"✅ Проверка токена для пользователя: {current_user.username}")
     return {
         "username": current_user.username,
         "role": current_user.role  # обязательно возвращаем роль
@@ -43,10 +49,7 @@ async def jwt_protected_route(current_user: User = Depends(get_current_user)):
 async def api_key_protected_route(current_user: User = Depends(get_api_user)):
     return {"username": current_user.username}
 
-@router.get("/admin-dashboard")
-async def admin_dashboard(current_user: User = Depends(require_roles(UserRole.admin))):
-    # Здесь логика для админа: мониторинг, статистика
-    return {"message": "Welcome to admin dashboard"}
+
 
 @router.get("/api/data")
 async def api_data(current_user=Depends(require_roles(UserRole.admin, UserRole.coder))):
@@ -58,7 +61,76 @@ async def chat_access(current_user=Depends(require_roles(UserRole.admin, UserRol
     # Логика для всех пользователей с доступом к чату
     return {"message": "Доступ к чату"}
 
+
 @router.get("/admin/dashboard")
-async def admin_dashboard(current_user=Depends(require_roles(UserRole.admin))):
-    # Логика для админа
-    return {"message": "Добро пожаловать в админ-панель"}
+def get_admin_dashboard(db: Session = Depends(get_db), current_user=Depends(require_roles(UserRole.admin))):
+    # Базовые метрики
+    total_users = db.query(func.count(User.id)).scalar()
+    total_chats = db.query(func.count(Chat.id)).scalar()
+    total_logs = db.query(func.count(ChatLog.id)).scalar()
+    total_api_keys = db.query(func.count(APIKey.id)).scalar()
+
+    avg_latency = db.query(func.avg(ChatLog.latency_ms)).scalar() or 0
+    latest_chat = db.query(Chat).order_by(Chat.created_at.desc()).first()
+
+    # CPU и RAM
+    cpu_percent = psutil.cpu_percent(interval=0.5)
+    ram = psutil.virtual_memory()
+    ram_total = round(ram.total / (1024 ** 3), 2)
+    ram_used = round(ram.used / (1024 ** 3), 2)
+
+    # GPU через pynvml
+    gpu_list = []
+    try:
+        pynvml.nvmlInit()
+        device_count = pynvml.nvmlDeviceGetCount()
+
+        for i in range(device_count):
+            handle = pynvml.nvmlDeviceGetHandleByIndex(i)
+            name = pynvml.nvmlDeviceGetName(handle).decode("utf-8")
+            mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+            utilization = pynvml.nvmlDeviceGetUtilizationRates(handle)
+            temperature = pynvml.nvmlDeviceGetTemperature(handle, pynvml.NVML_TEMPERATURE_GPU)
+
+            gpu_list.append({
+                "name": name,
+                "memory_total": round(mem_info.total / (1024 ** 3), 2),
+                "memory_allocated": round(mem_info.used / (1024 ** 3), 2),
+                "memory_reserved": round(mem_info.total / (1024 ** 3), 2),  # Если резерв отдельно — можно заменить
+                "utilization": utilization.gpu,
+                "temperature": temperature
+            })
+
+        pynvml.nvmlShutdown()
+    except pynvml.NVMLError as e:
+        print(f"Ошибка получения GPU-информации: {str(e)}")
+
+    # Ответ
+    return {
+        "users": total_users,
+        "chats": total_chats,
+        "logs": total_logs,
+        "api_keys": total_api_keys,
+        "avg_latency": round(avg_latency),
+        "latest_chat_title": latest_chat.title if latest_chat else "N/A",
+        "system": {
+            "cpu_percent": cpu_percent,
+            "ram_total": ram_total,
+            "ram_used": ram_used,
+            "gpus": gpu_list
+        }
+    }
+
+@router.get("/admin/users_activity")
+def get_users_activity(db: Session = Depends(get_db), user=Depends(require_roles(UserRole.admin))):
+    # Примерная логика, адаптируй под свою схему
+    return [
+        {
+            "id": u.id,
+            "name": u.username,
+            "email": u.email,
+            "requests": db.query(ChatLog).filter(ChatLog.user_id == u.id).count(),
+            "lastAction": db.query(ChatLog).filter(ChatLog.user_id == u.id).order_by(ChatLog.timestamp.desc()).first().timestamp
+        }
+        for u in db.query(User).all()
+    ]

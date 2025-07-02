@@ -50,6 +50,14 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(chat.router, tags=["Chat"])
 app.include_router(api_keys.router, tags=["API Keys"])
+
+# @app.on_event("startup")
+# def list_routes():
+#     print("📍 Список маршрутов:")
+#     for route in app.routes:
+#         print(f"➡️ {route.path}")
+
+
 # OpenAPI с BearerAuth
 def custom_openapi():
     if app.openapi_schema:

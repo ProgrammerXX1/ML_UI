@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Union
 import time
 import logging
 
@@ -11,6 +11,8 @@ from schemas.chat import (
     ChatRequest, ChatResponse, ChatLogItem,
     ChatCreate, ChatOut, ChatUpdate, MessageResponse
 )
+
+from pydantic import BaseModel, validator
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 router = APIRouter()
@@ -146,13 +148,35 @@ def delete_chat(chat_id: int, db: Session = Depends(get_db), user=Depends(get_cu
     db.commit()
 
 # ✅ Сохранение истории сообщений
+class MessageResponse(BaseModel):
+    request_text: str
+    response_text: str
+    timestamp: str
+    latency_ms: int
+
+    @validator("timestamp")
+    def validate_timestamp(cls, v):
+        # (опционально) валидация ISO-формата
+        return v
+
 @router.post("/chat/{chat_id}/save")
-def save_chat_messages(chat_id: int, messages: List[MessageResponse], db: Session = Depends(get_db), user=Depends(get_current_user)):
+def save_chat_messages(
+    chat_id: int,
+    messages: Union[MessageResponse, List[MessageResponse]] = Body(...),
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
     chat = db.query(Chat).filter(Chat.id == chat_id, Chat.user_id == user.id).first()
     if not chat:
         raise HTTPException(status_code=404, detail="Чат не найден")
 
+    # Приводим к списку, даже если один объект
+    if isinstance(messages, MessageResponse):
+        messages = [messages]
+
+    # Удаляем старые логи
     db.query(ChatLog).filter(ChatLog.chat_id == chat_id).delete()
+
     for msg in messages:
         db.add(ChatLog(
             user_id=user.id,
@@ -164,4 +188,4 @@ def save_chat_messages(chat_id: int, messages: List[MessageResponse], db: Sessio
             latency_ms=msg.latency_ms
         ))
     db.commit()
-    return {"status": "success"}
+    return {"status": "success", "count": len(messages)}

@@ -27,3 +27,20 @@ export async function apiFetch(url: string, options: any = {}) {
     throw err
   }
 }
+// utils/api.ts
+export function authCheck(): string {
+  const token = localStorage.getItem('access_token')
+  if (!token) throw new Error('NO_TOKEN')
+  return token
+}
+
+export async function fetchWithToken<T>(url: string, options: RequestInit = {}): Promise<T> {
+  const token = authCheck()
+  return await apiFetch(url, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...(options.headers || {})
+    }
+  })
+}
