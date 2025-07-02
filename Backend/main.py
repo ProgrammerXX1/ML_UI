@@ -38,7 +38,7 @@ app.add_middleware(
 # ],
     allow_origins=[
             PORT_SERVER,
-            "localhost:3000",
+            f"{PORT_SERVER}:3000",
             f"{PORT_SERVER}:8000"
     ],
     allow_credentials=True,
