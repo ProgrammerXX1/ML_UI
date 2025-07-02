@@ -30,16 +30,10 @@ run_migrations()
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=[
-#     "http://localhost:3000",
-#     "http://127.0.0.1:3000",
-#     "http://localhost:8000",
-#     "http://127.0.0.1:8000"
-# ],
     allow_origins=[
-            PORT_SERVER,
-            f"{PORT_SERVER}:3000",
-            f"{PORT_SERVER}:8000"
+    os.getenv("PORT_SERVER"),                      # http://10.121.252.227
+    f"{os.getenv('PORT_SERVER')}:3000",            # http://10.121.252.227:3000
+    f"{os.getenv('PORT_SERVER')}:8000"           # http://10.121.252.227:8000
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -89,4 +83,4 @@ if __name__ == "__main__":
     load_dotenv()  # Загрузка .env
     host = os.getenv("BACKEND_HOST", "0.0.0.0")
     port = int(os.getenv("BACKEND_PORT", 8000))
-    uvicorn.run("app.main:app", host=host, port=port, reload=False)
+    uvicorn.run("main:app", host=host, port=port, reload=False)
