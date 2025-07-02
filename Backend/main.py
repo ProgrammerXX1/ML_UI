@@ -92,4 +92,4 @@ if __name__ == "__main__":
     load_dotenv()  # Загрузка .env
     host = os.getenv("BACKEND_HOST", "localhost")
     port = int(os.getenv("BACKEND_PORT", 8000))
-    uvicorn.run("main:app", host=host, port=port, reload=False)
+    uvicorn.run("app.main:app", host=host, port=port, reload=False)
