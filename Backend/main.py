@@ -30,11 +30,7 @@ run_migrations()
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-    os.getenv("PORT_SERVER"),                      # http://10.121.252.227
-    f"{os.getenv('PORT_SERVER')}:3000",            # http://10.121.252.227:3000
-    f"{os.getenv('PORT_SERVER')}:8000"           # http://10.121.252.227:8000
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
