@@ -18,7 +18,7 @@ services:
       - app-net
 
   backend:
-    build: ./backend
+    build: ./Backend
     container_name: backend
     depends_on:
       - db
@@ -36,7 +36,7 @@ services:
       - "host.docker.internal:host-gateway"  # Позволяет контейнеру обращаться к хосту
 
   frontend:
-    build: ./frontend
+    build: ./Frontend
     container_name: frontend
     depends_on:
       - backend
