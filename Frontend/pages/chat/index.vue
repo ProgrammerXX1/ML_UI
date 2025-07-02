@@ -158,18 +158,12 @@ async function createChat() {
   }
 }
 
-async function saveChat() {
-  if (!editingChat.value) return
+async function saveChat(updatedChat: Chat) {
   try {
-    await fetchWithToken(`/chat/${editingChat.value.id}`, {
+    await fetchWithToken(`/chat/${updatedChat.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: editingChat.value.name, status: editingChat.value.status })
-    })
-    await fetchWithToken(`/chat/${editingChat.value.id}/save`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({})
+      body: JSON.stringify({ title: updatedChat.name, status: updatedChat.status })
     })
     await loadChats()
   } catch (err) {
@@ -179,6 +173,7 @@ async function saveChat() {
     editingChat.value = null
   }
 }
+
 
 async function deleteChat(chatId: number) {
   if (!confirm('Удалить чат?')) return
