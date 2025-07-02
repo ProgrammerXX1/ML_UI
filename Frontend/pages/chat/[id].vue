@@ -20,15 +20,20 @@
     <main ref="scrollContainer" class="flex-1 overflow-y-auto p-4 sm:px-6 md:px-8">
       <div v-if="isLoading" class="text-center text-gray-400">Загрузка...</div>
       <div v-else>
-        <div v-for="msg in messages" :key="msg.id" class="mb-6">
-  <div class="text-sm text-gray-400">Вы</div>
-  <div class="bg-gray-800 p-3 rounded-lg mt-1 whitespace-pre-wrap">{{ msg.request_text }}</div>
+        <div v-for="(msg, index) in allMessages" :key="index" class="mb-6">
+          <div class="text-sm text-gray-400">Вы</div>
+          <div class="bg-gray-800 p-3 rounded-lg mt-1 whitespace-pre-wrap">
+            {{ msg.request_text || msg.content }}
+          </div>
 
-  <div class="mt-4 text-sm text-gray-400">Модель</div>
-  <div class="bg-gray-800 p-3 rounded-lg mt-1 whitespace-pre-wrap">{{ msg.response_text }}</div>
-</div>
+          <div class="mt-4 text-sm text-gray-400">Модель</div>
+          <div class="bg-gray-800 p-3 rounded-lg mt-1 whitespace-pre-wrap">
+            {{ msg.response_text || msg.content }}
+          </div>
+        </div>
       </div>
     </main>
+
     <form
       @submit.prevent="sendMessage"
       class="flex items-center gap-2 p-4 bg-gray-900 border-t border-gray-800"
@@ -56,16 +61,16 @@ import { apiFetch } from '~/utils/api'
 import Header from '@/components/layout/Header.vue'
 
 type Message = {
-  id: number
   request_text: string
   response_text: string
-  created_at: string
+  timestamp: string
+  latency_ms: number
+  chat_id: number
 }
-
 
 type Chat = {
   id: number
-  name: string
+  title: string
   status: string
 }
 
@@ -87,10 +92,11 @@ const allMessages = computed(() => {
     return [
       ...messages.value,
       {
-        id: 'typing',
-        content: typedResponse.value,
-        sender: 'model',
-        created_at: new Date().toISOString()
+        request_text: newMessage.value,
+        response_text: typedResponse.value,
+        timestamp: new Date().toISOString(),
+        latency_ms: 0,
+        chat_id: chatId
       }
     ]
   }
@@ -151,27 +157,15 @@ async function sendMessage() {
   isTyping.value = true
   typedResponse.value = ''
 
-  messages.value.push({
-    id: Date.now(),
-    content: input,
-    sender: 'user',
-    created_at: new Date().toISOString()
-  })
-
+  const currentRequest = input
   newMessage.value = ''
   scrollToBottom()
 
   try {
-    const res = await fetchWithToken<{
-      request_text: string
-      response_text: string
-      timestamp: string
-      latency_ms: number
-      chat_id: number
-    }>(`/chat/${chatId}/send`, {
+    const res = await fetchWithToken<Message>(`/chat/${chatId}/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: input })
+      body: JSON.stringify({ message: currentRequest })
     })
 
     const fullText = res.response_text || ''
@@ -186,10 +180,7 @@ async function sendMessage() {
         clearInterval(interval)
 
         messages.value.push({
-          id: Date.now() + 1,
-          content: fullText,
-          sender: 'model',
-          created_at: new Date().toISOString()
+          ...res
         })
 
         typedResponse.value = ''
@@ -208,7 +199,18 @@ async function sendMessage() {
 
 async function saveChat() {
   try {
-    await fetchWithToken(`/chat/${chatId}/save`, { method: 'POST' })
+    if (messages.value.length > 0) {
+      const serialized = messages.value.map((m) => ({
+        ...m,
+        timestamp: typeof m.timestamp === 'string' ? m.timestamp : new Date(m.timestamp).toISOString()
+      }))
+
+      await fetchWithToken(`/chat/${chatId}/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(serialized)
+      })
+    }
   } catch (err) {
     console.warn('Ошибка сохранения чата:', err)
   }
@@ -222,5 +224,3 @@ async function handleBack() {
 onMounted(loadChat)
 onBeforeUnmount(saveChat)
 </script>
-
-
