@@ -1,7 +1,7 @@
 import requests
 
 # Адрес API
-BASE_URL = "http://localhost:8080"
+BASE_URL = "http://localhost:8000"
 
 # Логин — получение JWT токена
 def login(username: str, password: str):

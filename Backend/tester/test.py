@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-BASE_URL = "http://localhost:8080"
+BASE_URL = "http://localhost:8000"
 
 @pytest.fixture
 def token():
