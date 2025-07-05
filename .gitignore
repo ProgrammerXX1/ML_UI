@@ -1,0 +1,24 @@
+# node
+node_modules/
+dist/
+.env
+.env.*.local
+*.log
+*.local
+*.DS_Store
+
+# VS Code
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# npm
+package-lock.json
+
+# backups
+*.bak
+*.tmp
+*.swp
+*.swo
